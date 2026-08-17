@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>千葉ロッテマリーンズ｜ファンハブ（選手名鑑・スタメン・観戦記録・フォトギャラリー）</title>
+  <meta name="description" content="千葉ロッテマリーンズファン向け総合Webアプリ。選手名鑑・グラウンド型スタメン作成・観戦記録＆勝率自動計算・現地フォトギャラリー。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark: #0a0a0f; --surface: #111118; --surface2: #1a1a26;
+      --card-bg: #13131e; --card-hover: #1c1c2e;
+      --marines-blue: #0050a0; --marines-red: #c8102e;
+      --accent: #00aaff; --accent2: #7b61ff; --gold: #f5a623; --green: #10b981;
+      --white: #ffffff; --muted: #8888aa;
+      --border: rgba(255,255,255,0.08); --border-accent: rgba(0,170,255,0.3);
+      --glow: 0 0 20px rgba(0,170,255,0.35); --glow-red: 0 0 20px rgba(200,16,46,0.5);
+      --glow-gold: 0 0 20px rgba(245,166,35,0.4);
+      --radius: 14px; --radius-sm: 8px; --t: 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--dark); color: var(--white); font-family: 'Noto Sans JP', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+    header {
+      position: relative;
+      background: linear-gradient(160deg, #0a0010 0%, #000000 45%, #00001a 100%);
+      border-bottom: 1px solid var(--border); padding: 0 16px; overflow: hidden;
+    }
+    header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 120% at 50% -20%, rgba(0,100,200,0.25) 0%, transparent 70%); pointer-events: none; }
+    header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--marines-red), var(--accent), var(--marines-red), transparent); animation: scanline 4s ease-in-out infinite; }
+    @keyframes scanline { 0%,100% { opacity:.4; } 50% { opacity:1; } }
+
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 18px 0 0; display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .header-logo { width: 50px; height: 50px; background: linear-gradient(135deg, var(--marines-red), #8b0000); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; box-shadow: 0 0 0 3px rgba(200,16,46,0.3), var(--glow-red); flex-shrink: 0; user-select: none; }
+    .header-text { flex: 1; min-width: 180px; }
+    .header-text h1 { font-family: 'Oswald', sans-serif; font-size: clamp(18px,4vw,26px); font-weight: 700; letter-spacing: 2px; line-height: 1.1; background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .header-text p { font-size: 11px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+    .header-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+    .header-btn { padding: 6px 12px; border-radius: 50px; border: 1px solid var(--border-accent); background: rgba(0, 170, 255, 0.08); color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all var(--t); display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .header-btn:hover { background: rgba(0, 170, 255, 0.25); border-color: var(--accent); transform: translateY(-1px); }
+
+    /* Google Sync UI */
+    .google-btn { padding: 6px 14px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all var(--t); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .google-btn:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.4); transform: translateY(-1px); }
+    .google-btn.logged-in { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.4); color: #34d399; }
+    .user-profile { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 50px; padding: 3px 10px 3px 4px; font-size: 11px; }
+    .user-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-accent); }
+    .user-name { font-weight: 700; color: var(--white); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gdrive-actions { display: flex; align-items: center; gap: 6px; }
+
+    .nav-tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { padding: 10px 18px; border-radius: 10px 10px 0 0; border: 1px solid var(--border); border-bottom: none; background: rgba(255,255,255,0.04); color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all var(--t); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+    .tab-btn:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+    .tab-btn.active { background: var(--dark); color: var(--white); border-color: var(--border-accent); box-shadow: 0 -2px 12px rgba(0,170,255,0.2); }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 80px; }
+    .tab-content { display: none; animation: fadeIn 0.28s ease both; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    .search-section { margin-bottom: 28px; }
+    .search-wrap { position: relative; margin-bottom: 16px; }
+    #searchInput { width: 100%; padding: 14px 16px 14px 48px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 50px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 15px; outline: none; transition: border-color var(--t), box-shadow var(--t); }
+    #searchInput::placeholder { color: var(--muted); }
+    #searchInput:focus { border-color: var(--accent); box-shadow: var(--glow); }
+    .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .clear-btn { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 26px; height: 26px; color: var(--muted); cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 13px; }
+    .clear-btn.visible { display: flex; }
+    .clear-btn:hover { background: rgba(255,255,255,0.2); color: var(--white); }
+
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn { padding: 7px 16px; border-radius: 50px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all var(--t); }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active { background: linear-gradient(135deg, var(--marines-blue), var(--accent2)); border-color: transparent; color: var(--white); box-shadow: 0 4px 15px rgba(0,80,160,0.4); }
+
+    .result-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .result-count { font-size: 12px; color: var(--muted); }
+    .result-count span { color: var(--accent); font-weight: 700; }
+
+    #playerGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .player-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 16px 18px; cursor: pointer; position: relative; overflow: hidden; transition: transform var(--t), border-color var(--t), box-shadow var(--t); animation: fadeInUp 0.32s ease both; display: flex; flex-direction: column; }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    .player-card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(0,80,160,0.08) 0%,transparent 60%); pointer-events:none; }
+    .player-card::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--marines-red),var(--accent)); transform:scaleX(0); transform-origin:left; transition:transform var(--t); }
+    .player-card:hover { transform:translateY(-4px); border-color:var(--border-accent); box-shadow:0 12px 40px rgba(0,0,0,0.5),var(--glow); background:var(--card-hover); }
+    .player-card:hover::after { transform:scaleX(1); }
+    .card-number { font-family:'Oswald',sans-serif; font-size:38px; font-weight:700; color:transparent; -webkit-text-stroke:1.5px rgba(255,255,255,0.1); position:absolute; top:10px; right:12px; user-select:none; transition:-webkit-text-stroke-color var(--t); }
+    .player-card:hover .card-number { -webkit-text-stroke-color:rgba(0,170,255,0.3); }
+    .card-badge { display:inline-block; padding:3px 8px; border-radius:50px; font-size:10px; font-weight:700; letter-spacing:1px; margin-bottom:10px; }
+    .badge-pitcher  { background:rgba(200,16,46,0.2);  color:#ff6b7a; border:1px solid rgba(200,16,46,0.3); }
+    .badge-catcher  { background:rgba(245,166,35,0.15); color:#f5c842; border:1px solid rgba(245,166,35,0.3); }
+    .badge-infield  { background:rgba(0,170,255,0.12); color:#5dd4ff; border:1px solid rgba(0,170,255,0.25); }
+    .badge-outfield { background:rgba(123,97,255,0.15); color:#b8a8ff; border:1px solid rgba(123,97,255,0.3); }
+    .card-name { font-size:17px; font-weight:700; color:var(--white); line-height:1.3; margin-bottom:3px; }
+    .card-kana { font-size:10px; color:var(--muted); margin-bottom:8px; }
+    .card-comment-snippet { font-size:11px; color:rgba(255,255,255,0.7); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:12px; }
+    .card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:10px; border-top:1px solid var(--border); }
+    .card-num-label { font-family:'Oswald',sans-serif; font-size:13px; color:var(--muted); }
+    .card-num-label span { font-size:18px; font-weight:700; color:var(--white); }
+    .card-arrow { width:28px; height:28px; border-radius:50%; background:rgba(0,170,255,0.1); border:1px solid rgba(0,170,255,0.2); display:flex; align-items:center; justify-content:center; color:var(--accent); transition:background var(--t),transform var(--t); }
+    .player-card:hover .card-arrow { background:rgba(0,170,255,0.25); transform:translateX(2px); }
+    #emptyState { display:none; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; text-align:center; grid-column:1/-1; }
+    #emptyState.visible { display:flex; }
+    .empty-icon { font-size:48px; margin-bottom:14px; }
+    .empty-title { font-size:17px; font-weight:700; margin-bottom:6px; }
+    .empty-sub { font-size:12px; color:var(--muted); }
+
+    /* SECTION HEADER / BUTTONS */
+    .section-header { margin-bottom: 24px; }
+    .section-title { font-size: 22px; font-weight: 900; letter-spacing: 1px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+    .section-desc { font-size: 12px; color: var(--muted); }
+    .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-primary { flex: 1; padding: 13px 18px; background: linear-gradient(135deg, var(--marines-blue), var(--accent2)); border: none; border-radius: 50px; color: var(--white); font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 20px rgba(0,80,160,0.4); transition: transform var(--t), box-shadow var(--t); display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,80,160,0.6); }
+    .btn-secondary { padding: 13px 20px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 50px; color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--t); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+
+    /* ─── GROUND / ORDER UI ─── */
+    .order-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+
+    .ground-wrap {
+      background: linear-gradient(180deg, #0a1f10 0%, #1a5c2e 30%, #246b38 55%, #b8860b 72%, #7a5a08 86%, #4a3806 100%);
+      border-radius: 18px; padding: 18px 12px 20px; position: relative; overflow: hidden;
+      border: 2px solid rgba(34,197,94,0.25); box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+    }
+    .ground-wrap::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(34,197,94,0.06) 0%, transparent 70%); pointer-events: none; }
+    .ground-title { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: rgba(255,255,255,0.35); text-align: center; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.08); }
+    .ground-outfield { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 12px; }
+    .ground-infield { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+    .ground-battery { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .ground-dh-area { display: flex; justify-content: center; padding-top: 12px; border-top: 2px dashed rgba(255,255,255,0.12); }
+
+    .pos-card { background: rgba(0,0,0,0.62); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 6px; text-align: center; min-width: 0; flex: 1; transition: border-color 0.2s, background 0.2s, transform 0.15s; }
+    .pos-card:hover { background: rgba(10,80,40,0.6); border-color: rgba(34,197,94,0.45); transform: scale(1.03); }
+    .ground-battery .pos-card { width: 130px; flex: none; }
+    .ground-dh-area .pos-card { width: 150px; flex: none; }
+    .pos-en { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700; color: #34d399; letter-spacing: 1px; }
+    .pos-jp { font-size: 9px; color: rgba(255,255,255,0.45); margin-bottom: 5px; }
+    .bat-circle { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: var(--marines-red); font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .pos-player-name { font-size: 12px; font-weight: 700; color: var(--white); line-height: 1.2; min-height: 14px; }
+    .pos-player-num { font-family: 'Oswald', sans-serif; font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+
+    .lineup-editor { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .lineup-title { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .pitcher-slot { background: rgba(200,16,46,0.1); border: 1px solid rgba(200,16,46,0.3); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+    .slot-sp-label { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; color: #ff6b7a; width: 60px; flex-shrink: 0; }
+    .order-slot-list { display: flex; flex-direction: column; gap: 7px; }
+    .order-slot-item { display: flex; align-items: center; gap: 7px; background: var(--card-bg); border: 1px solid var(--border); padding: 7px 10px; border-radius: var(--radius-sm); }
+    .slot-num { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; color: var(--accent); width: 20px; text-align: center; }
+    .slot-pos-select { background: var(--surface2); border: 1px solid var(--border); color: var(--white); padding: 5px 7px; border-radius: 6px; font-size: 11px; font-weight: 700; outline: none; cursor: pointer; width: 55px; }
+    .slot-player-select { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--white); padding: 5px 8px; border-radius: 6px; font-size: 12px; outline: none; cursor: pointer; }
+    .slot-player-select:focus, .slot-pos-select:focus { border-color: var(--accent); }
+
+    /* ─── GAMELOG ─── */
+    .gamelog-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
+    .stats-dashboard { grid-column: 1/-1; display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 10px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+    .stat-card.highlight { background: linear-gradient(135deg, rgba(0,80,160,0.2), rgba(123,97,255,0.15)); border-color: rgba(0,170,255,0.4); box-shadow: var(--glow); }
+    .stat-label { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase; }
+    .stat-value { font-family: 'Oswald', sans-serif; font-size: clamp(26px,4vw,38px); font-weight: 700; line-height: 1; }
+    .stat-value.win-rate { color: var(--gold); text-shadow: var(--glow-gold); }
+    .stat-sub { font-size: 11px; color: var(--muted); margin-top: 5px; }
+    .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; height: fit-content; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 12px; font-weight: 700; color: var(--white); margin-bottom: 5px; }
+    .form-input, .form-select, .form-textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--white); padding: 10px 12px; border-radius: var(--radius-sm); font-family: 'Noto Sans JP', sans-serif; font-size: 13px; outline: none; transition: border-color var(--t); }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+    .form-textarea { resize: vertical; min-height: 60px; }
+    .result-radio-group { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .radio-option { position: relative; }
+    .radio-option input { position: absolute; opacity: 0; pointer-events: none; }
+    .radio-label { display: flex; align-items: center; justify-content: center; padding: 9px 6px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; cursor: pointer; transition: all var(--t); color: var(--muted); }
+    .radio-option input:checked + .radio-label.win { background: rgba(16,185,129,0.2); border-color: var(--green); color: #34d399; }
+    .radio-option input:checked + .radio-label.lose { background: rgba(200,16,46,0.2); border-color: var(--marines-red); color: #ff6b7a; }
+    .radio-option input:checked + .radio-label.draw { background: rgba(255,255,255,0.08); border-color: var(--muted); color: var(--white); }
+    .logs-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .logs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .logs-header h3 { font-size: 15px; font-weight: 700; }
+    .log-list { display: flex; flex-direction: column; gap: 10px; }
+    .log-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; transition: transform var(--t); }
+    .log-item:hover { transform: translateX(3px); }
+    .log-main-info { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .result-pill { padding: 5px 10px; border-radius: 50px; font-size: 11px; font-weight: 900; min-width: 52px; text-align: center; }
+    .result-pill.win { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+    .result-pill.lose { background: rgba(200,16,46,0.2); color: #ff6b7a; border: 1px solid rgba(200,16,46,0.4); }
+    .result-pill.draw { background: rgba(255,255,255,0.08); color: var(--muted); border: 1px solid var(--border); }
+    .log-details { flex: 1; }
+    .log-date-stadium { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+    .log-vs { font-size: 14px; font-weight: 700; }
+    .log-memo { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 3px; }
+    .log-del-btn { background: transparent; border: none; color: var(--muted); cursor: pointer; padding: 5px; border-radius: 4px; transition: color var(--t), background var(--t); }
+    .log-del-btn:hover { color: #ff6b7a; background: rgba(200,16,46,0.15); }
+
+    /* ─── GALLERY ─── */
+    .gallery-upload-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 24px; }
+    .gallery-upload-title { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .gallery-upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+    .upload-zone { border: 2px dashed rgba(0,170,255,0.3); border-radius: var(--radius-sm); padding: 0; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: rgba(0,170,255,0.03); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 160px; overflow: hidden; }
+    .upload-zone:hover { border-color: var(--accent); background: rgba(0,170,255,0.08); }
+    .upload-zone.has-img { border-style: solid; border-color: var(--accent); }
+    .upload-zone-inner { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 28px 16px; }
+    .upload-zone-icon { font-size: 36px; }
+    .upload-zone-text { font-size: 13px; color: var(--muted); }
+    .upload-zone-hint { font-size: 11px; color: rgba(255,255,255,0.35); }
+    #uploadPreviewImg { width: 100%; height: 160px; object-fit: cover; display: none; }
+    .gallery-form-fields { display: flex; flex-direction: column; gap: 12px; }
+    .gallery-form-fields .form-group { margin-bottom: 0; }
+
+    .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .photo-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; transition: transform 0.2s, border-color 0.2s; position: relative; }
+    .photo-card:hover { transform: translateY(-3px); border-color: var(--border-accent); }
+    .photo-card img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+    .photo-card-meta { padding: 8px 10px; }
+    .photo-card-date { font-size: 10px; color: var(--muted); }
+    .photo-card-caption { font-size: 12px; color: var(--white); font-weight: 500; margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .photo-del-btn { position: absolute; top: 6px; right: 6px; background: rgba(200,16,46,0.85); border: none; border-radius: 50%; width: 24px; height: 24px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; opacity: 0; transition: opacity 0.2s; }
+    .photo-card:hover .photo-del-btn { opacity: 1; }
+    #galleryEmpty { display: none; flex-direction: column; align-items: center; padding: 60px 20px; text-align: center; }
+    #galleryEmpty.visible { display: flex; }
+
+    #photoLightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+    #photoLightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-content { position: relative; max-width: 90vw; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    #lightboxImg { max-width: 100%; max-height: 70vh; border-radius: 12px; object-fit: contain; }
+    .lightbox-info { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 10px 20px; text-align: center; font-size: 13px; max-width: 500px; width: 100%; }
+    .lightbox-info .li-date { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+    .lightbox-info .li-caption { font-weight: 700; }
+    .lightbox-close { position: absolute; top: -14px; right: -14px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: background var(--t); }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ─── PLAYER MODAL ─── */
+    #modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.28s ease; }
+    #modalOverlay.open { opacity: 1; pointer-events: all; }
+    #modal { background: linear-gradient(160deg, #12121f 0%, #0a0a18 100%); border: 1px solid rgba(0,170,255,0.2); border-radius: 20px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 80px rgba(0,0,0,0.8); transform: translateY(30px) scale(0.96); transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), opacity 0.28s ease; opacity: 0; }
+    #modal::-webkit-scrollbar { width: 5px; }
+    #modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    #modalOverlay.open #modal { transform: translateY(0) scale(1); opacity: 1; }
+    .modal-header { background: linear-gradient(135deg, #08082a, #0d0d24); padding: 28px 28px 22px; border-radius: 20px 20px 0 0; position: relative; overflow: hidden; }
+    .modal-header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0,80,160,0.3) 0%, transparent 70%); pointer-events: none; }
+    .modal-header-stripe { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--marines-red) 0%, var(--marines-blue) 40%, var(--accent) 70%, var(--accent2) 100%); }
+    .modal-close { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all var(--t); z-index: 2; }
+    .modal-close:hover { background: rgba(255,255,255,0.16); color: var(--white); transform: rotate(90deg); }
+    .modal-big-number { font-family: 'Oswald', sans-serif; font-size: 80px; font-weight: 700; color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,0.06); position: absolute; bottom: -8px; right: 22px; user-select: none; }
+    .modal-badge { display: inline-block; padding: 3px 12px; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 1px; margin-bottom: 10px; position: relative; z-index: 1; }
+    .modal-name { font-size: clamp(22px,5vw,32px); font-weight: 900; color: var(--white); line-height: 1.15; position: relative; z-index: 1; margin-bottom: 3px; }
+    .modal-kana { font-size: 12px; color: var(--muted); position: relative; z-index: 1; }
+    .modal-num-row { display: flex; align-items: baseline; gap: 5px; margin-top: 12px; position: relative; z-index: 1; }
+    .modal-num-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .modal-num-val { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; color: var(--accent); line-height: 1; }
+    .modal-body { padding: 24px 28px 28px; }
+    .modal-section-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .modal-section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-accent), transparent); }
+    .comment-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 20px; }
+    .comment-text { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 500; }
+    .chant-box { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--marines-red); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 20px; position: relative; overflow: hidden; }
+    .chant-box::before { content: '♪'; position: absolute; top: -8px; right: 14px; font-size: 60px; color: rgba(255,255,255,0.03); pointer-events: none; }
+    .chant-lyrics { font-size: 14px; line-height: 2; color: rgba(255,255,255,0.9); white-space: pre-wrap; word-break: break-all; }
+    .action-links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .official-link-btn, .yt-search-link { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; color: var(--white); text-decoration: none; border-radius: 50px; font-size: 12px; font-weight: 700; transition: transform var(--t), box-shadow var(--t); }
+    .official-link-btn { background: linear-gradient(135deg, #0050a0, #003a75); box-shadow: 0 4px 15px rgba(0,80,160,0.3); border: 1px solid rgba(0,170,255,0.3); }
+    .official-link-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,80,160,0.45); }
+    .yt-search-link { background: linear-gradient(135deg, #c8102e, #9b0020); box-shadow: 0 4px 15px rgba(200,16,46,0.3); }
+    .yt-search-link:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(200,16,46,0.45); }
+    .video-iframe-wrap { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: var(--radius-sm); overflow: hidden; background: #000; margin-bottom: 14px; }
+    .video-iframe-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+    /* TOAST */
+    #toast { position: fixed; bottom: 22px; right: 22px; background: linear-gradient(135deg, var(--marines-blue), var(--accent2)); color: var(--white); padding: 11px 22px; border-radius: 50px; font-size: 13px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.5), var(--glow); z-index: 3000; opacity: 0; transform: translateY(20px); pointer-events: none; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    footer { text-align: center; padding: 24px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .order-layout, .gamelog-layout { grid-template-columns: 1fr; }
+      .stats-dashboard { grid-template-columns: repeat(2,1fr); }
+      .gallery-upload-grid { grid-template-columns: 1fr; }
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .header-inner { padding: 14px 0 0; }
+      .tab-btn { padding: 8px 12px; font-size: 12px; }
+      main { padding: 20px 12px 60px; }
+      #playerGrid { grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 12px; }
+      .stats-dashboard { gap: 10px; }
+      .stat-card { padding: 14px 16px; }
+      .modal-header { padding: 22px 18px 18px; }
+      .modal-body { padding: 18px 18px 22px; }
+      .action-links { flex-direction: column; }
+      .official-link-btn, .yt-search-link { justify-content: center; }
+      .ground-outfield { gap: 4px; }
+      .ground-infield { gap: 4px; }
+      .pos-card { padding: 7px 4px; }
+      .pos-en { font-size: 11px; }
+      .pos-player-name { font-size: 10px; }
+    }
+
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: var(--dark); }
+    ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2a2a3a; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="header-logo" aria-hidden="true">M</div>
+      <div class="header-text">
+        <h1>千葉ロッテマリーンズ</h1>
+        <p>MARINES FAN HUB &amp; DATABASE 2026</p>
+      </div>
+      <div class="header-actions">
+        <!-- Google Login / Drive Sync -->
+        <div id="googleAuthUnlogged" style="display:flex;align-items:center;gap:6px;">
+          <button class="google-btn" id="googleAuthBtn" title="GoogleアカウントでログインしてDrive同期">
+            <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12s.7 2.3 1.9 4.7l3.7-1.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+            Googleでログイン
+          </button>
+          <button class="header-btn" id="gdriveConfigBtn" title="Google API クライアントID設定" style="padding:6px 9px;">⚙️</button>
+        </div>
+
+        <div id="googleAuthLogged" style="display:none;align-items:center;gap:6px;">
+          <div class="user-profile" id="userProfileBadge">
+            <img id="userAvatarImg" class="user-avatar" src="" alt="Google Avatar" />
+            <span id="userNameText" class="user-name"></span>
+          </div>
+          <button class="header-btn" id="gdriveSaveBtn" title="Google Drive (appDataFolder) へ保存" style="border-color:rgba(16,185,129,0.5);background:rgba(16,185,129,0.15);color:#34d399;">
+            ☁️ Drive保存
+          </button>
+          <button class="header-btn" id="gdriveLoadBtn" title="Google Drive から復元">
+            ☁️ Drive復元
+          </button>
+          <button class="header-btn" id="googleLogoutBtn" title="ログアウト" style="padding:6px 8px;">
+            🚪
+          </button>
+        </div>
+
+        <!-- Local JSON Backup / Restore -->
+        <button class="header-btn" id="exportDataBtn" title="全データをJSONファイルで保存（スマホ・PC対応）">📥 保存</button>
+        <button class="header-btn" id="importDataBtn" title="JSONファイルからデータ復元">📤 復元</button>
+        <input type="file" id="backupFileInput" accept=".json" style="display:none;" />
+      </div>
+    </div>
+    <nav class="nav-tabs" role="tablist" aria-label="メインナビゲーション">
+      <button class="tab-btn active" data-tab="players" role="tab" aria-selected="true" id="btn-players">⚾ 選手名鑑</button>
+      <button class="tab-btn" data-tab="order" role="tab" aria-selected="false" id="btn-order">📋 ベストスタメン</button>
+      <button class="tab-btn" data-tab="gamelog" role="tab" aria-selected="false" id="btn-gamelog">🎟️ 観戦記録</button>
+      <button class="tab-btn" data-tab="gallery" role="tab" aria-selected="false" id="btn-gallery">📷 フォトギャラリー</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- TAB 1: 選手名鑑 -->
+  <section id="tab-players" class="tab-content active" role="tabpanel" aria-labelledby="btn-players">
+    <div class="search-section">
+      <div class="search-wrap">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="searchInput" placeholder="選手名・ひらがな・背番号で検索..." autocomplete="off" />
+        <button class="clear-btn" id="clearBtn" aria-label="検索をクリア">&#x2715;</button>
+      </div>
+      <div class="filters" role="group" aria-label="ポジションフィルター">
+        <button class="filter-btn active" data-pos="all">すべて</button>
+        <button class="filter-btn" data-pos="投手">⚡ 投手</button>
+        <button class="filter-btn" data-pos="捕手">🛡 捕手</button>
+        <button class="filter-btn" data-pos="内野手">⚾ 内野手</button>
+        <button class="filter-btn" data-pos="外野手">🌿 外野手</button>
+      </div>
+    </div>
+    <div class="result-meta">
+      <p class="result-count"><span id="countNum">0</span> 名の選手が見つかりました</p>
+    </div>
+    <div id="playerGrid" role="list">
+      <div id="emptyState">
+        <div class="empty-icon">⚾</div>
+        <p class="empty-title">選手が見つかりません</p>
+        <p class="empty-sub">別のキーワードで検索してみてください</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: ベストスタメン (グラウンド型UI) -->
+  <section id="tab-order" class="tab-content" role="tabpanel" aria-labelledby="btn-order">
+    <div class="section-header">
+      <h2 class="section-title">📋 俺のベストスタメン</h2>
+      <p class="section-desc">グラウンド型UIで理想のスタメンを組もう。打順と守備位置を設定して保存できます。</p>
+    </div>
+    <div class="order-layout">
+      <!-- Ground Field (LEFT) -->
+      <div class="ground-wrap" aria-label="グラウンドスタメン表示">
+        <div class="ground-title">CHIBA LOTTE MARINES ─ STARTING LINEUP</div>
+        <!-- Outfield -->
+        <div class="ground-outfield">
+          <div class="pos-card" id="gpos-LF">
+            <div class="pos-en">LF</div><div class="pos-jp">左翼手</div>
+            <div class="bat-circle" id="gbat-LF"></div>
+            <div class="pos-player-name" id="gname-LF">---</div>
+            <div class="pos-player-num" id="gnum-LF"></div>
+          </div>
+          <div class="pos-card" id="gpos-CF">
+            <div class="pos-en">CF</div><div class="pos-jp">中堅手</div>
+            <div class="bat-circle" id="gbat-CF"></div>
+            <div class="pos-player-name" id="gname-CF">---</div>
+            <div class="pos-player-num" id="gnum-CF"></div>
+          </div>
+          <div class="pos-card" id="gpos-RF">
+            <div class="pos-en">RF</div><div class="pos-jp">右翼手</div>
+            <div class="bat-circle" id="gbat-RF"></div>
+            <div class="pos-player-name" id="gname-RF">---</div>
+            <div class="pos-player-num" id="gnum-RF"></div>
+          </div>
+        </div>
+        <!-- Infield -->
+        <div class="ground-infield">
+          <div class="pos-card" id="gpos-3B">
+            <div class="pos-en">3B</div><div class="pos-jp">三塁手</div>
+            <div class="bat-circle" id="gbat-3B"></div>
+            <div class="pos-player-name" id="gname-3B">---</div>
+            <div class="pos-player-num" id="gnum-3B"></div>
+          </div>
+          <div class="pos-card" id="gpos-SS">
+            <div class="pos-en">SS</div><div class="pos-jp">遊撃手</div>
+            <div class="bat-circle" id="gbat-SS"></div>
+            <div class="pos-player-name" id="gname-SS">---</div>
+            <div class="pos-player-num" id="gnum-SS"></div>
+          </div>
+          <div class="pos-card" id="gpos-2B">
+            <div class="pos-en">2B</div><div class="pos-jp">二塁手</div>
+            <div class="bat-circle" id="gbat-2B"></div>
+            <div class="pos-player-name" id="gname-2B">---</div>
+            <div class="pos-player-num" id="gnum-2B"></div>
+          </div>
+          <div class="pos-card" id="gpos-1B">
+            <div class="pos-en">1B</div><div class="pos-jp">一塁手</div>
+            <div class="bat-circle" id="gbat-1B"></div>
+            <div class="pos-player-name" id="gname-1B">---</div>
+            <div class="pos-player-num" id="gnum-1B"></div>
+          </div>
+        </div>
+        <!-- Battery -->
+        <div class="ground-battery">
+          <div class="pos-card" id="gpos-P">
+            <div class="pos-en">P</div><div class="pos-jp">先発投手</div>
+            <div class="pos-player-name" id="gname-P">---</div>
+            <div class="pos-player-num" id="gnum-P"></div>
+          </div>
+          <div class="pos-card" id="gpos-C">
+            <div class="pos-en">C</div><div class="pos-jp">捕手</div>
+            <div class="bat-circle" id="gbat-C"></div>
+            <div class="pos-player-name" id="gname-C">---</div>
+            <div class="pos-player-num" id="gnum-C"></div>
+          </div>
+        </div>
+        <!-- DH -->
+        <div class="ground-dh-area">
+          <div class="pos-card" id="gpos-DH">
+            <div class="pos-en">DH</div><div class="pos-jp">指名打者</div>
+            <div class="bat-circle" id="gbat-DH"></div>
+            <div class="pos-player-name" id="gname-DH">---</div>
+            <div class="pos-player-num" id="gnum-DH"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lineup Editor (RIGHT) -->
+      <div class="lineup-editor">
+        <div class="lineup-title">
+          <span>打順設定</span>
+          <span style="font-size:11px;color:var(--muted);font-weight:400;">選択するとグラウンドに反映</span>
+        </div>
+        <div class="pitcher-slot">
+          <div class="slot-sp-label">先発 SP</div>
+          <select id="sp-select" class="slot-player-select" aria-label="先発投手を選択">
+            <option value="">-- 投手を選択 --</option>
+          </select>
+        </div>
+        <div class="order-slot-list" id="orderSlotList"></div>
+        <div class="btn-group">
+          <button class="btn-primary" id="saveOrderBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            オーダーを保存
+          </button>
+          <button class="btn-secondary" id="resetOrderBtn">リセット</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: 観戦記録 -->
+  <section id="tab-gamelog" class="tab-content" role="tabpanel" aria-labelledby="btn-gamelog">
+    <div class="section-header">
+      <h2 class="section-title">🎟️ 今シーズンの観戦成績</h2>
+      <p class="section-desc">現地観戦の記録と勝率を自動計算します。データはブラウザに保存されます。</p>
+    </div>
+    <div class="stats-dashboard">
+      <div class="stat-card highlight">
+        <div class="stat-label">現地勝率</div>
+        <div class="stat-value win-rate" id="stat-win-rate">.---</div>
+        <div class="stat-sub">勝 ÷ (勝 + 敗)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">現地参戦数</div>
+        <div class="stat-value" id="stat-total">0 <span style="font-size:15px;">試合</span></div>
+        <div class="stat-sub">今シーズン累計</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">勝敗内訳</div>
+        <div class="stat-value" style="color:#34d399;" id="stat-w-l">0勝 0敗</div>
+        <div class="stat-sub">引き分け: <span id="stat-draw">0</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">最多観戦球場</div>
+        <div class="stat-value" style="font-size:18px;color:var(--accent);" id="stat-stadium">-</div>
+        <div class="stat-sub">ホーム / 遠征先</div>
+      </div>
+    </div>
+    <div class="gamelog-layout">
+      <div class="form-card">
+        <h3 style="font-size:15px;font-weight:700;color:var(--accent);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);">新規観戦記録を追加</h3>
+        <form id="gameLogForm">
+          <div class="form-group">
+            <label class="form-label" for="logDate">観戦日</label>
+            <input type="date" id="logDate" class="form-input" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="logOpponent">対戦相手</label>
+            <select id="logOpponent" class="form-select" required>
+              <option value="">-- 対戦チームを選択 --</option>
+              <optgroup label="パシフィック・リーグ">
+                <option value="福岡ソフトバンクホークス">福岡ソフトバンクホークス</option>
+                <option value="北海道日本ハムファイターズ">北海道日本ハムファイターズ</option>
+                <option value="オリックス・バファローズ">オリックス・バファローズ</option>
+                <option value="東北楽天ゴールデンイーグルス">東北楽天ゴールデンイーグルス</option>
+                <option value="埼玉西武ライオンズ">埼玉西武ライオンズ</option>
+              </optgroup>
+              <optgroup label="セントラル・リーグ">
+                <option value="読売ジャイアンツ">読売ジャイアンツ</option>
+                <option value="阪神タイガース">阪神タイガース</option>
+                <option value="横浜DeNAベイスターズ">横浜DeNAベイスターズ</option>
+                <option value="広島東洋カープ">広島東洋カープ</option>
+                <option value="東京ヤクルトスワローズ">東京ヤクルトスワローズ</option>
+                <option value="中日ドラゴンズ">中日ドラゴンズ</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="logStadium">開催球場</label>
+            <select id="logStadium" class="form-select" required>
+              <option value="ZOZOマリンスタジアム">ZOZOマリンスタジアム</option>
+              <option value="エスコンフィールドHOKKAIDO">エスコンフィールドHOKKAIDO</option>
+              <option value="みずほPayPayドーム福岡">みずほPayPayドーム福岡</option>
+              <option value="京セラドーム大阪">京セラドーム大阪</option>
+              <option value="ほっともっとフィールド神戸">ほっともっとフィールド神戸</option>
+              <option value="ベルーナドーム">ベルーナドーム</option>
+              <option value="楽天モバイルパーク宮城">楽天モバイルパーク宮城</option>
+              <option value="明治神宮野球場">明治神宮野球場</option>
+              <option value="東京ドーム">東京ドーム</option>
+              <option value="横浜スタジアム">横浜スタジアム</option>
+              <option value="バンテリンドーム ナゴヤ">バンテリンドーム ナゴヤ</option>
+              <option value="阪神甲子園球場">阪神甲子園球場</option>
+              <option value="MAZDA Zoom-Zoom スタジアム広島">MAZDA Zoom-Zoom スタジアム広島</option>
+              <option value="その他">その他球場</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">試合結果</label>
+            <div class="result-radio-group">
+              <div class="radio-option">
+                <input type="radio" id="resWin" name="logResult" value="win" checked />
+                <label for="resWin" class="radio-label win">〇 勝ち</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="resLose" name="logResult" value="lose" />
+                <label for="resLose" class="radio-label lose">● 負け</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="resDraw" name="logResult" value="draw" />
+                <label for="resDraw" class="radio-label draw">△ 引分</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="logMemo">観戦メモ</label>
+            <textarea id="logMemo" class="form-textarea" placeholder="スコアや印象に残ったプレイなど..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%;">観戦記録を追加 ＋</button>
+        </form>
+      </div>
+      <div class="logs-wrap">
+        <div class="logs-header">
+          <h3>観戦ログ履歴</h3>
+          <button id="clearLogsBtn" style="background:transparent;border:none;color:var(--muted);font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;transition:all 0.2s;" onmouseover="this.style.color='#ff6b7a'" onmouseout="this.style.color='var(--muted)'">全消去</button>
+        </div>
+        <div class="log-list" id="logList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 4: フォトギャラリー -->
+  <section id="tab-gallery" class="tab-content" role="tabpanel" aria-labelledby="btn-gallery">
+    <div class="section-header">
+      <h2 class="section-title">📷 現地観戦フォトギャラリー</h2>
+      <p class="section-desc">現地で撮影した写真を保存・整理。データはブラウザの IndexedDB に保存されます（localForage 使用）。</p>
+    </div>
+    <!-- Upload Form -->
+    <div class="gallery-upload-card">
+      <div class="gallery-upload-title">📸 写真を追加する</div>
+      <form id="galleryUploadForm">
+        <div class="gallery-upload-grid">
+          <!-- Upload zone -->
+          <div>
+            <div class="upload-zone" id="uploadZone" role="button" tabindex="0" aria-label="写真を選択（クリック）">
+              <input type="file" id="photoFileInput" accept="image/*" style="display:none;" />
+              <div class="upload-zone-inner">
+                <div class="upload-zone-icon">📷</div>
+                <div class="upload-zone-text">クリックして写真を選択</div>
+                <div class="upload-zone-hint">JPG / PNG / HEIC など</div>
+              </div>
+            </div>
+            <img id="uploadPreviewImg" alt="選択した写真のプレビュー" />
+          </div>
+          <!-- Form fields -->
+          <div class="gallery-form-fields">
+            <div class="form-group">
+              <label class="form-label" for="photoDate">観戦日</label>
+              <input type="date" id="photoDate" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="photoStadium">開催球場</label>
+              <select id="photoStadium" class="form-select">
+                <option value="">-- 球場を選択 --</option>
+                <option value="ZOZOマリンスタジアム">ZOZOマリンスタジアム</option>
+                <option value="エスコンフィールドHOKKAIDO">エスコンフィールドHOKKAIDO</option>
+                <option value="みずほPayPayドーム福岡">みずほPayPayドーム福岡</option>
+                <option value="京セラドーム大阪">京セラドーム大阪</option>
+                <option value="ほっともっとフィールド神戸">ほっともっとフィールド神戸</option>
+                <option value="ベルーナドーム">ベルーナドーム</option>
+                <option value="楽天モバイルパーク宮城">楽天モバイルパーク宮城</option>
+                <option value="東京ドーム">東京ドーム</option>
+                <option value="横浜スタジアム">横浜スタジアム</option>
+                <option value="その他">その他</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="photoOpponent">対戦相手</label>
+              <select id="photoOpponent" class="form-select">
+                <option value="">-- チームを選択 --</option>
+                <option value="ソフトバンク">福岡ソフトバンクホークス</option>
+                <option value="日本ハム">北海道日本ハムファイターズ</option>
+                <option value="オリックス">オリックス・バファローズ</option>
+                <option value="楽天">東北楽天ゴールデンイーグルス</option>
+                <option value="西武">埼玉西武ライオンズ</option>
+                <option value="巨人">読売ジャイアンツ</option>
+                <option value="阪神">阪神タイガース</option>
+                <option value="DeNA">横浜DeNAベイスターズ</option>
+                <option value="広島">広島東洋カープ</option>
+                <option value="ヤクルト">東京ヤクルトスワローズ</option>
+                <option value="中日">中日ドラゴンズ</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="photoCaption">キャプション・メモ</label>
+              <textarea id="photoCaption" class="form-textarea" placeholder="試合の感想や印象に残ったシーン..." style="min-height:50px;"></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%;">📤 ギャラリーに追加</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Gallery Grid -->
+    <div id="galleryEmpty" class="visible">
+      <div style="font-size:48px;margin-bottom:14px;">📷</div>
+      <p style="font-size:17px;font-weight:700;color:var(--white);margin-bottom:6px;">まだ写真がありません</p>
+      <p style="font-size:12px;color:var(--muted);">上のフォームから観戦写真を追加してください</p>
+    </div>
+    <div class="photo-grid" id="photoGrid"></div>
+  </section>
+
+</main>
+
+<!-- Player Modal -->
+<div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalPlayerName">
+  <div id="modal">
+    <div class="modal-header">
+      <div class="modal-header-stripe"></div>
+      <button class="modal-close" id="modalClose" aria-label="閉じる">&#x2715;</button>
+      <div class="modal-big-number" id="modalBigNum" aria-hidden="true"></div>
+      <div class="modal-badge" id="modalBadge"></div>
+      <h2 class="modal-name" id="modalPlayerName"></h2>
+      <p class="modal-kana" id="modalKana"></p>
+      <div class="modal-num-row">
+        <span class="modal-num-label">#</span>
+        <span class="modal-num-val" id="modalNumber"></span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-section-label">選手紹介 / コメント</p>
+      <div class="comment-box"><p class="comment-text" id="modalComment"></p></div>
+      <div id="chantSection">
+        <p class="modal-section-label">応援歌 / チャント</p>
+        <div class="chant-box"><p class="chant-lyrics" id="modalChant"></p></div>
+      </div>
+      <p class="modal-section-label">公式情報 &amp; メディア</p>
+      <div id="modalVideo"></div>
+      <div class="action-links" id="actionLinks"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Photo Lightbox -->
+<div id="photoLightbox" aria-modal="true" role="dialog" aria-label="写真の拡大表示">
+  <div class="lightbox-content">
+    <button class="lightbox-close" id="lightboxClose" aria-label="閉じる">&#x2715;</button>
+    <img id="lightboxImg" alt="観戦写真（拡大表示）" />
+    <div class="lightbox-info">
+      <div class="li-date" id="lightboxDate"></div>
+      <div class="li-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Google Config Modal -->
+<div id="gdriveConfigModalOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:1500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.28s ease;">
+  <div style="background:linear-gradient(160deg,#12121f 0%,#0a0a18 100%);border:1px solid rgba(0,170,255,0.2);border-radius:20px;width:100%;max-width:520px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,0.8);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+      <h3 style="font-size:16px;font-weight:700;color:var(--accent);">⚙️ Google API クライアントID設定</h3>
+      <button id="gdriveConfigClose" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">&#x2715;</button>
+    </div>
+    <p style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:14px;">
+      Google Drive 同期（appDataFolderへの自動バックアップ・復元）を利用するため、Google Cloud Consoleで作成した <strong>OAuth 2.0 クライアント ID</strong> を入力してください。
+    </p>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label class="form-label" for="gdriveClientIdInput">Client ID (クライアントID)</label>
+      <input type="text" id="gdriveClientIdInput" class="form-input" placeholder="例: 123456789-xxxxxx.apps.googleusercontent.com" />
+    </div>
+    <div style="font-size:11px;color:var(--muted);background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;margin-bottom:16px;line-height:1.6;">
+      💡 <strong>クライアントIDの取得手順:</strong><br/>
+      1. <a href="https://console.cloud.google.com/" target="_blank" rel="noopener" style="color:var(--accent);">Google Cloud Console</a> でプロジェクトを作成<br/>
+      2. 「OAuth 同意画面」を設定し、「Google Drive API」を有効化<br/>
+      3. 「認証情報」→「OAuth 2.0 クライアント IDの作成」（種類: Web アプリケーション）<br/>
+      4. 「承認済みの JavaScript 生成元」にこのサイトのURLを追加
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn-secondary" id="gdriveConfigCancel" style="padding:9px 16px;">キャンセル</button>
+      <button class="btn-primary" id="gdriveConfigSave" style="padding:9px 20px;">設定を保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<footer>
+  <p>&copy; 2026 千葉ロッテマリーンズ ファンハブ &nbsp;|&nbsp; ファンによる非公式アプリケーション</p>
+</footer>
+
+<script>
+const PLAYERS = [
+  {
+    "id": "2026_00001250",
+    "number": "00",
+    "name": "池田 来翔",
+    "kana": "いけだ らいと",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001250.html",
+    "my_comment": "力強いパンチ力と勝負強さが魅力の内野手!習志野高校OB。首太い。"
+  },
+  {
+    "id": "2026_00001274",
+    "number": "0",
+    "name": "髙部 瑛斗",
+    "kana": "たかべ あきと",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001274.html",
+    "my_comment": "圧倒的な脚力と広い守備範囲を誇るリードオフマン候補。背番号０の後継者！"
+  },
+  {
+    "id": "2026_00001251",
+    "number": "1",
+    "name": "藤原 恭大",
+    "kana": "ふじわら きょうた",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001251.html",
+    "my_comment": "高い身体能力とフルスイングが魅力の外野手。大舞台での勝負強さとスピード感溢れるプレイで球場を沸かせる。"
+  },
+  {
+    "id": "2026_00001252",
+    "number": "2",
+    "name": "松川 虎生",
+    "kana": "まつかわ こう",
+    "position": "捕手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001252.html",
+    "my_comment": "高卒1年目からスタメンを張った若き司令塔。堂々としたリードとパンチ力のある打撃で扇の要を担う。"
+  },
+  {
+    "id": "2026_00001253",
+    "number": "3",
+    "name": "角中 勝也",
+    "kana": "かくなか かつや",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001253.html",
+    "my_comment": "悪球打ちでも有名な天才バットコントロールの持ち主。2026年シーズンをもって引退を決意！"
+  },
+  {
+    "id": "2026_00001257",
+    "number": "4",
+    "name": "友杉 篤輝",
+    "kana": "ともすぎ あつき",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001257.html",
+    "my_comment": "俊足と堅実なショート守備が持ち味の内野手。内野安打をもぎ取る足とガッツ溢れるプレーが魅力。"
+  },
+  {
+    "id": "2026_00001255",
+    "number": "5",
+    "name": "安田 尚憲",
+    "kana": "やすだ ひさのり",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001255.html",
+    "my_comment": "ロッテの未来を担う大砲候補。柔らかな打撃フォームから打球を遠くへ飛ばす長打力が自慢。"
+  },
+  {
+    "id": "2026_00001182",
+    "number": "6",
+    "name": "西川 史礁",
+    "kana": "にしかわ みしょう",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001182.html",
+    "my_comment": "豪快なフルスイングと圧倒的な飛距離が持ち味のスラッガー。チームの次世代を背負う2025年新人王！"
+  },
+  {
+    "id": "2026_00001254",
+    "number": "7",
+    "name": "藤岡 裕大",
+    "kana": "ふじおか ゆうだい",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001254.html",
+    "my_comment": "勝負所での一撃やドラマチックな打撃を見せる内野の要。2023年CSでの幕張の奇跡の立役者。"
+  },
+  {
+    "id": "2026_00001256",
+    "number": "8",
+    "name": "中村 奨吾",
+    "kana": "なかむら しょうご",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001256.html",
+    "my_comment": "長年チームを牽引する大黒柱。勝負強いバッティングとチームを支える存在感が光る信頼のリーダー。"
+  },
+  {
+    "id": "2026_00001290",
+    "number": "10",
+    "name": "上田 希由翔",
+    "kana": "うえだ きゅうと",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001290.html",
+    "my_comment": "広角に打ち分けるセンスと選球眼の良さが光る内野手。打線のポイントゲッターとしての成長に期待！"
+  },
+  {
+    "id": "2026_00001791",
+    "number": "13",
+    "name": "毛利 海大",
+    "kana": "もうり かいと",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001791.html",
+    "my_comment": "キレのある伸びやかな直球と変化球で打ち取るサウスポー。今後の投手陣を支える期待の若手腕。"
+  },
+  {
+    "id": "2026_00001258",
+    "number": "14",
+    "name": "小島 和哉",
+    "kana": "おじま かずや",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001258.html",
+    "my_comment": "安定感抜群の左のエース。ゲームメイク能力が高く、マウンドでの気迫のこもった投げっぷりが熱い！"
+  },
+  {
+    "id": "2026_00001281",
+    "number": "15",
+    "name": "横山 陸人",
+    "kana": "よこやま りくと",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001281.html",
+    "my_comment": "威力抜群のサイドスローから繰り出す速球が武器。9回を任されるロッテの守護神。"
+  },
+  {
+    "id": "2026_00001124",
+    "number": "16",
+    "name": "種市 篤暉",
+    "kana": "たねいち あつき",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001124.html",
+    "my_comment": "圧倒的な三振奪取能力を誇る本格派右腕。鋭いフォークでバッターをきりきり舞いにする本格派エース！"
+  },
+  {
+    "id": "2026_00001259",
+    "number": "19",
+    "name": "唐川 侑己",
+    "kana": "からかわ ゆうき",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001259.html",
+    "my_comment": "精密なコントロールと多彩な変化球で相手を翻弄するベテラン右腕。成田高校の王子。"
+  },
+  {
+    "id": "2026_00001260",
+    "number": "22",
+    "name": "グレゴリー・ポランコ",
+    "kana": "ぐれごりー・ぽらんこ",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001260.html",
+    "my_comment": "「エル・コーヒー」の応援歌が最高の強打の助っ人。スタンドへ放り込むアーチと「パワー！」パフォーマンスが最高！"
+  },
+  {
+    "id": "2026_00001261",
+    "number": "23",
+    "name": "石川 慎吾",
+    "kana": "いしかわ しんご",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001261.html",
+    "my_comment": "「ダイナマイト・シンゴ」の異名を持つ屈指の左キラー。一振りに賭ける集中力と勝負強さが光る！"
+  },
+  {
+    "id": "2026_00001263",
+    "number": "25",
+    "name": "岡 大海",
+    "kana": "おか ひろみ",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001263.html",
+    "my_comment": "劇的なサヨナラ劇を何度も巻き起こす「ヒロミナイト」の立役者。走攻守すべてで高い身体能力を発揮！"
+  },
+  {
+    "id": "2026_00001268",
+    "number": "32",
+    "name": "佐藤 都志也",
+    "kana": "さとう としや",
+    "position": "捕手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001268.html",
+    "my_comment": "打撃センス抜群の打てる捕手。シャープなスイングと強肩でチームの勝利に貢献する頼れる扇の要。"
+  },
+  {
+    "id": "2026_00001269",
+    "number": "33",
+    "name": "八木 彬",
+    "kana": "やぎ あきら",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001269.html",
+    "my_comment": "気迫あふれるピッチングで打者をねじ伏せるパワフルリリーバー。重い直球とフォークのコンビネーションが持ち味。"
+  },
+  {
+    "id": "2026_00001271",
+    "number": "35",
+    "name": "田中 晴也",
+    "kana": "たなか はるや",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001271.html",
+    "my_comment": "恵まれた体格から投げ込む角度のあるストレートが魅力の大器。将来の投手陣を背負うスケールの大きさが自慢。"
+  },
+  {
+    "id": "2026_00001803",
+    "number": "38",
+    "name": "山﨑 剛",
+    "kana": "やまさき つよし",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001803.html",
+    "my_comment": "俊足と内外野を守れるユーティリティ性が光るバイプレイヤー。機動力を生かした積極的なプレイに注目！"
+  },
+  {
+    "id": "2026_00001804",
+    "number": "42",
+    "name": "アンドレ・ジャクソン",
+    "kana": "あんどれ・じゃくそん",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001804.html",
+    "my_comment": "豪速球と落差のある変化球で押しまくる頼れる助っ人右腕。マウンド上でのパッション溢れる姿も人気。"
+  },
+  {
+    "id": "2026_00001276",
+    "number": "47",
+    "name": "鈴木 昭汰",
+    "kana": "すずき しょうた",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001276.html",
+    "my_comment": "キレ味鋭いボールで打者の胸元を突く強気なサウスポー。リリーフ陣に欠かせない頼もしいセットアッパー。"
+  },
+  {
+    "id": "2026_00001277",
+    "number": "51",
+    "name": "山口 航輝",
+    "kana": "やまぐち こうき",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001277.html",
+    "my_comment": "チームトップクラスの長打力を誇るロマン溢れる和製スラッガー。2026年、ついに覚醒！"
+  },
+  {
+    "id": "2026_00001278",
+    "number": "52",
+    "name": "益田 直也",
+    "kana": "ますだ なおや",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001278.html",
+    "my_comment": "独特な投球フォームと魂のこもったピッチングが持ち味のベテラン投手。通算249S！"
+  },
+  {
+    "id": "2026_00001279",
+    "number": "56",
+    "name": "中森 俊介",
+    "kana": "なかもり しゅんすけ",
+    "position": "投手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001279.html",
+    "my_comment": "伸びのあるストレートとマウンド度胸の良さが魅力の若手右腕。先発・救援問わずに才能を発揮！"
+  },
+  {
+    "id": "2026_00001280",
+    "number": "57",
+    "name": "小川 龍成",
+    "kana": "おがわ りゅうせい",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001280.html",
+    "my_comment": "球界屈指の粘り強さと絶品の内野守備を誇るスペシャリスト。「小川の粘り」は相手投手にとって最大の脅威！"
+  },
+  {
+    "id": "2026_00001282",
+    "number": "61",
+    "name": "山本 大斗",
+    "kana": "やまもと だいと",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001282.html",
+    "my_comment": "育成出身から這い上がってきた未完の長距離砲。規格外の飛距離を放つ将来の大砲候補！"
+  },
+  {
+    "id": "2026_00001283",
+    "number": "63",
+    "name": "和田 康士朗",
+    "kana": "わだ こうしろう",
+    "position": "外野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001283.html",
+    "my_comment": "球界トップクラスの足を誇るスピードスター！代走で登場した瞬間に球場の空気を一変させる韋駄天。"
+  },
+  {
+    "id": "2026_00001294",
+    "number": "65",
+    "name": "寺地 隆成",
+    "kana": "てらち りゅうせい",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001294.html",
+    "my_comment": "高卒1年目から確かなミート力を見せた期待の若手捕手。広角に打ち分けるセンス抜群の打撃が自慢！"
+  },
+  {
+    "id": "2026_00001301",
+    "number": "99",
+    "name": "ネフタリ・ソト",
+    "kana": "ねふたり・そと",
+    "position": "内野手",
+    "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001301.html",
+    "my_comment": "驚異的なパワーでアーチを量産する主砲。チャンスでの勝負強さと豪快なスイングで頼りになる助っ人！"
+  }
+];
+// ─── TAB SWITCHING ───────────────────────────────────────────────────────────
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = btn.dataset.tab;
+    tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    tabContents.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+    document.getElementById('tab-' + t).classList.add('active');
+  });
+});
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+// ─── UTILITIES ───────────────────────────────────────────────────────────────
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function posBadge(pos) {
+  if (pos === '投手') return 'badge-pitcher';
+  if (pos === '捕手') return 'badge-catcher';
+  if (pos === '内野手') return 'badge-infield';
+  return 'badge-outfield';
+}
+
+// ─── PLAYER LIST ─────────────────────────────────────────────────────────────
+let curQ = '', curPos = 'all';
+const grid = document.getElementById('playerGrid');
+const emptyState = document.getElementById('emptyState');
+const countEl = document.getElementById('countNum');
+
+function filterPlayers() {
+  return PLAYERS.filter(p => {
+    const q = curQ.trim().toLowerCase();
+    const nm = p.name ? p.name.toLowerCase() : '';
+    const kn = p.kana ? p.kana : '';
+    const mQ = !q || nm.includes(q) || kn.includes(q) || p.number === q || nm.replace(/\s/g,'').includes(q);
+    const mP = curPos === 'all' || p.position === curPos;
+    return mQ && mP;
+  });
+}
+
+function renderPlayers() {
+  grid.querySelectorAll('.player-card').forEach(c => c.remove());
+  const list = filterPlayers();
+  countEl.textContent = list.length;
+  if (!list.length) { emptyState.classList.add('visible'); return; }
+  emptyState.classList.remove('visible');
+  list.forEach((p, i) => {
+    const card = document.createElement('article');
+    card.className = 'player-card';
+    card.setAttribute('role','listitem');
+    card.setAttribute('tabindex','0');
+    card.style.animationDelay = (i * 0.025) + 's';
+    const commentHtml = p.my_comment ? '<p class="card-comment-snippet">' + esc(p.my_comment) + '</p>' : '';
+    card.innerHTML =
+      '<div class="card-number" aria-hidden="true">' + esc(p.number) + '</div>' +
+      '<span class="card-badge ' + posBadge(p.position) + '">' + esc(p.position) + '</span>' +
+      '<p class="card-name">' + esc(p.name) + '</p>' +
+      '<p class="card-kana">' + esc(p.kana) + '</p>' +
+      commentHtml +
+      '<div class="card-footer"><div class="card-num-label">背番号 <span>' + esc(p.number) + '</span></div><div class="card-arrow">&#8250;</div></div>';
+    card.addEventListener('click', () => openPlayerModal(p));
+    card.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openPlayerModal(p); } });
+    grid.appendChild(card);
+  });
+}
+
+const sInput = document.getElementById('searchInput');
+const clrBtn = document.getElementById('clearBtn');
+sInput.addEventListener('input', () => { curQ = sInput.value; clrBtn.classList.toggle('visible', curQ.length > 0); renderPlayers(); });
+clrBtn.addEventListener('click', () => { sInput.value = ''; curQ = ''; clrBtn.classList.remove('visible'); sInput.focus(); renderPlayers(); });
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); curPos = btn.dataset.pos; renderPlayers();
+  });
+});
+
+// ─── PLAYER MODAL ────────────────────────────────────────────────────────────
+const overlay = document.getElementById('modalOverlay');
+const mClose = document.getElementById('modalClose');
+
+function openPlayerModal(p) {
+  document.getElementById('modalBigNum').textContent = '#' + p.number;
+  document.getElementById('modalPlayerName').textContent = p.name;
+  document.getElementById('modalKana').textContent = p.kana;
+  document.getElementById('modalNumber').textContent = p.number;
+  document.getElementById('modalComment').textContent = p.my_comment || '紹介コメントはありません。';
+  const badge = document.getElementById('modalBadge');
+  badge.textContent = p.position; badge.className = 'modal-badge ' + posBadge(p.position);
+  const chantSec = document.getElementById('chantSection');
+  if (p.chant_lyrics) { chantSec.style.display = 'block'; document.getElementById('modalChant').textContent = p.chant_lyrics; }
+  else { chantSec.style.display = 'none'; }
+  const vid = document.getElementById('modalVideo');
+  if (p.youtube_id) {
+    vid.innerHTML = '<div class="video-iframe-wrap"><iframe src="https://www.youtube.com/embed/' + esc(p.youtube_id) + '?rel=0" title="' + esc(p.name) + ' 応援歌" allowfullscreen loading="lazy"></iframe></div>';
+  } else { vid.innerHTML = ''; }
+  const q = encodeURIComponent(p.name + ' 応援歌 千葉ロッテマリーンズ');
+  let links = '';
+  if (p.official_url) {
+    links += '<a class="official-link-btn" href="' + esc(p.official_url) + '" target="_blank" rel="noopener noreferrer">' +
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>公式プロフィール</a>';
+  }
+  links += '<a class="yt-search-link" href="https://www.youtube.com/results?search_query=' + q + '" target="_blank" rel="noopener noreferrer">' +
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.75 15.5V8.5L15.8 12l-6.05 3.5z"/></svg>応援歌を YouTube で探す</a>';
+  document.getElementById('actionLinks').innerHTML = links;
+  overlay.classList.add('open'); document.body.style.overflow = 'hidden'; mClose.focus();
+}
+
+function closePlayerModal() {
+  overlay.classList.remove('open'); document.body.style.overflow = '';
+  const ifr = document.querySelector('#modalVideo iframe');
+  if (ifr) { ifr.src = ifr.src; }
+}
+
+mClose.addEventListener('click', closePlayerModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closePlayerModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (overlay.classList.contains('open')) closePlayerModal();
+  if (document.getElementById('photoLightbox').classList.contains('open')) document.getElementById('photoLightbox').classList.remove('open');
+});
+
+// ─── ORDER / GROUND UI ───────────────────────────────────────────────────────
+const POS_OPTIONS = ['LF','CF','RF','3B','SS','2B','1B','C','DH'];
+
+const DEFAULT_LINEUP = [
+  { batOrder:1, pos:'LF', playerId:'' },
+  { batOrder:2, pos:'LF', playerId:'' },
+  { batOrder:3, pos:'LF', playerId:'' },
+  { batOrder:4, pos:'LF', playerId:'' },
+  { batOrder:5, pos:'LF', playerId:'' },
+  { batOrder:6, pos:'LF', playerId:'' },
+  { batOrder:7, pos:'LF', playerId:'' },
+  { batOrder:8, pos:'LF', playerId:'' },
+  { batOrder:9, pos:'LF', playerId:'' },
+];
+
+let orderState = { sp: '', lineup: JSON.parse(JSON.stringify(DEFAULT_LINEUP)) };
+
+function initOrderForm() {
+  const spSelect = document.getElementById('sp-select');
+  const slotList = document.getElementById('orderSlotList');
+  const allSorted = [...PLAYERS].sort((a,b) => parseInt(a.number||'99') - parseInt(b.number||'99'));
+  const pitchers = PLAYERS.filter(p => p.position === '投手');
+
+  pitchers.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = '#' + p.number + ' ' + p.name;
+    spSelect.appendChild(opt);
+  });
+
+  slotList.innerHTML = '';
+  for (let i = 0; i < 9; i++) {
+    const slot = orderState.lineup[i];
+    const item = document.createElement('div');
+    item.className = 'order-slot-item';
+    const posOpts = POS_OPTIONS.map(k => '<option value="' + k + '">' + k + '</option>').join('');
+    const playerOpts = '<option value="">-- 選手 --</option>' +
+      allSorted.map(p => '<option value="' + p.id + '">#' + p.number + ' ' + p.name + '</option>').join('');
+    item.innerHTML = '<span class="slot-num">' + (i+1) + '</span>' +
+      '<select class="slot-pos-select" id="opos-' + i + '" aria-label="' + (i+1) + '番打者の守備位置">' + posOpts + '</select>' +
+      '<select class="slot-player-select" id="oplayer-' + i + '" aria-label="' + (i+1) + '番打者の選手">' + playerOpts + '</select>';
+    slotList.appendChild(item);
+  }
+
+  loadSavedOrder();
+
+  spSelect.addEventListener('change', () => { orderState.sp = spSelect.value; updateGroundDisplay(); });
+  for (let i = 0; i < 9; i++) {
+    document.getElementById('opos-' + i).addEventListener('change', () => { orderState.lineup[i].pos = document.getElementById('opos-' + i).value; updateGroundDisplay(); });
+    document.getElementById('oplayer-' + i).addEventListener('change', () => { orderState.lineup[i].playerId = document.getElementById('oplayer-' + i).value; updateGroundDisplay(); });
+  }
+}
+
+function updateGroundDisplay() {
+  const spPlayer = PLAYERS.find(p => p.id === orderState.sp);
+  document.getElementById('gname-P').textContent = spPlayer ? spPlayer.name : '---';
+  document.getElementById('gnum-P').textContent  = spPlayer ? '#' + spPlayer.number : '';
+
+  POS_OPTIONS.forEach(posKey => {
+    const slot = orderState.lineup.find(s => s.pos === posKey);
+    const player = slot ? PLAYERS.find(p => p.id === slot.playerId) : null;
+    const nameEl = document.getElementById('gname-' + posKey);
+    const numEl  = document.getElementById('gnum-'  + posKey);
+    const batEl  = document.getElementById('gbat-'  + posKey);
+    if (nameEl) nameEl.textContent = player ? player.name : '---';
+    if (numEl)  numEl.textContent  = player ? '#' + player.number : '';
+    if (batEl) {
+      if (slot) { batEl.textContent = slot.batOrder; batEl.style.display = 'inline-flex'; }
+      else { batEl.style.display = 'none'; }
+    }
+  });
+}
+
+function saveOrder() {
+  orderState.sp = document.getElementById('sp-select').value;
+  for (let i = 0; i < 9; i++) {
+    orderState.lineup[i].pos = document.getElementById('opos-' + i).value;
+    orderState.lineup[i].playerId = document.getElementById('oplayer-' + i).value;
+  }
+  localStorage.setItem('marines_order_v2', JSON.stringify(orderState));
+  showToast('ベストスタメンを保存しました！');
+  updateGroundDisplay();
+}
+
+function loadSavedOrder() {
+  const saved = localStorage.getItem('marines_order_v2');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      orderState = data;
+      if (data.sp) document.getElementById('sp-select').value = data.sp;
+      (data.lineup || []).forEach((item, i) => {
+        if (i < 9) {
+          const posEl    = document.getElementById('opos-' + i);
+          const playerEl = document.getElementById('oplayer-' + i);
+          if (posEl)    posEl.value    = item.pos      || '';
+          if (playerEl) playerEl.value = item.playerId || '';
+        }
+      });
+    } catch(e) { console.error('Order load error', e); }
+  } else {
+    DEFAULT_LINEUP.forEach((item, i) => {
+      const el = document.getElementById('opos-' + i);
+      if (el) el.value = item.pos;
+    });
+    orderState = { sp: '', lineup: JSON.parse(JSON.stringify(DEFAULT_LINEUP)) };
+  }
+  updateGroundDisplay();
+}
+
+document.getElementById('saveOrderBtn').addEventListener('click', saveOrder);
+document.getElementById('resetOrderBtn').addEventListener('click', () => {
+  localStorage.removeItem('marines_order_v2');
+  orderState = { sp: '', lineup: JSON.parse(JSON.stringify(DEFAULT_LINEUP)) };
+  document.getElementById('sp-select').value = '';
+  DEFAULT_LINEUP.forEach((item, i) => {
+    const posEl    = document.getElementById('opos-' + i);
+    const playerEl = document.getElementById('oplayer-' + i);
+    if (posEl)    posEl.value    = item.pos;
+    if (playerEl) playerEl.value = '';
+  });
+  updateGroundDisplay();
+  showToast('オーダーをリセットしました');
+});
+
+// ─── GAME LOG ────────────────────────────────────────────────────────────────
+let gameLogs = [];
+
+function initGameLogs() {
+  document.getElementById('logDate').value = new Date().toISOString().split('T')[0];
+  loadGameLogs();
+  document.getElementById('gameLogForm').addEventListener('submit', e => { e.preventDefault(); addGameLog(); });
+  document.getElementById('clearLogsBtn').addEventListener('click', () => {
+    if (confirm('すべての観戦記録を削除しますか？')) {
+      gameLogs = []; saveGameLogs(); showToast('観戦ログを全消去しました');
+    }
+  });
+}
+
+function addGameLog() {
+  const date     = document.getElementById('logDate').value;
+  const opponent = document.getElementById('logOpponent').value;
+  const stadium  = document.getElementById('logStadium').value;
+  const result   = document.querySelector('input[name="logResult"]:checked').value;
+  const memo     = document.getElementById('logMemo').value.trim();
+  if (!date || !opponent || !stadium) { showToast('日付・対戦相手・球場を入力してください'); return; }
+  gameLogs.unshift({ id: Date.now().toString(), date, opponent, stadium, result, memo });
+  saveGameLogs();
+  document.getElementById('logMemo').value = '';
+  showToast('観戦記録を保存しました！');
+}
+
+window.deleteGameLog = function(id) {
+  gameLogs = gameLogs.filter(l => l.id !== id);
+  saveGameLogs(); showToast('ログを削除しました');
+};
+
+function saveGameLogs() {
+  localStorage.setItem('marines_logs_v2', JSON.stringify(gameLogs));
+  renderGameLogs();
+}
+
+function loadGameLogs() {
+  const saved = localStorage.getItem('marines_logs_v2');
+  if (saved) {
+    try { gameLogs = JSON.parse(saved); } catch(e) { gameLogs = []; }
+  } else {
+    gameLogs = [
+      { id:'s1', date:'2026-05-18', opponent:'福岡ソフトバンクホークス', stadium:'ZOZOマリンスタジアム', result:'win', memo:'小島7回無失点！ファン感謝デー前夜のアツい勝利' },
+      { id:'s2', date:'2026-04-29', opponent:'オリックス・バファローズ', stadium:'ZOZOマリンスタジアム', result:'win', memo:'藤原の先頭打者ホームランから始まった快勝！' }
+    ];
+    saveGameLogs();
+  }
+  renderGameLogs();
+}
+
+function renderGameLogs() {
+  const listEl = document.getElementById('logList');
+  listEl.innerHTML = '';
+  let wins = 0, losses = 0, draws = 0;
+  const stadCount = {};
+
+  gameLogs.forEach(log => {
+    if (log.result === 'win')       wins++;
+    else if (log.result === 'lose') losses++;
+    else                            draws++;
+    stadCount[log.stadium] = (stadCount[log.stadium] || 0) + 1;
+
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    const rt = log.result === 'win' ? '〇 勝' : log.result === 'lose' ? '● 負' : '△ 分';
+    const rc = log.result === 'win' ? 'win'  : log.result === 'lose' ? 'lose' : 'draw';
+    item.innerHTML =
+      '<div class="log-main-info">' +
+        '<span class="result-pill ' + rc + '">' + rt + '</span>' +
+        '<div class="log-details">' +
+          '<div class="log-date-stadium">' + esc(log.date) + ' &#128205;' + esc(log.stadium) + '</div>' +
+          '<div class="log-vs">vs ' + esc(log.opponent) + '</div>' +
+          (log.memo ? '<div class="log-memo">' + esc(log.memo) + '</div>' : '') +
+        '</div>' +
+      '</div>' +
+      '<button class="log-del-btn" title="このログを削除" onclick="deleteGameLog(\'' + log.id + '\')">&#x2715;</button>';
+    listEl.appendChild(item);
+  });
+
+  const decGames = wins + losses;
+  let rateStr = '.---';
+  if (decGames > 0) {
+    const r = wins / decGames;
+    rateStr = r >= 1 ? '1.000' : r.toFixed(3).replace(/^0/, '');
+  }
+  document.getElementById('stat-win-rate').textContent = rateStr;
+  document.getElementById('stat-total').innerHTML = (wins + losses + draws) + ' <span style="font-size:14px;">試合</span>';
+  document.getElementById('stat-w-l').textContent = wins + '勝 ' + losses + '敗';
+  document.getElementById('stat-draw').textContent = draws;
+
+  let topStad = '-', maxC = 0;
+  for (const [s, c] of Object.entries(stadCount)) { if (c > maxC) { maxC = c; topStad = s; } }
+  // Shorten stadium name for display
+  const shortMap = { 'ZOZOマリンスタジアム':'ZOZOマリン', 'エスコンフィールドHOKKAIDO':'エスコンF', 'みずほPayPayドーム福岡':'PayPayドーム', '京セラドーム大阪':'京セラD', 'ベルーナドーム':'ベルーナD', '楽天モバイルパーク宮城':'楽天モバパ' };
+  document.getElementById('stat-stadium').textContent = shortMap[topStad] || topStad;
+}
+
+// ─── GALLERY (localForage / IndexedDB) ───────────────────────────────────────
+const GALLERY_KEY = 'marines_gallery_v1';
+let galleryPhotos = [];
+let selectedDataUrl = null;
+
+async function initGallery() {
+  document.getElementById('photoDate').value = new Date().toISOString().split('T')[0];
+
+  // Load from IndexedDB via localForage
+  try {
+    const saved = await localforage.getItem(GALLERY_KEY);
+    if (Array.isArray(saved)) galleryPhotos = saved;
+  } catch(e) { console.warn('localForage load error', e); galleryPhotos = []; }
+  renderGallery();
+
+  // Upload zone
+  const zone      = document.getElementById('uploadZone');
+  const fileInput = document.getElementById('photoFileInput');
+  const previewEl = document.getElementById('uploadPreviewImg');
+
+  function triggerFileSelect() { fileInput.click(); }
+  zone.addEventListener('click', triggerFileSelect);
+  zone.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); triggerFileSelect(); } });
+
+  function handleFileChange(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      selectedDataUrl = ev.target.result;
+      previewEl.src = selectedDataUrl;
+      previewEl.style.display = 'block';
+      zone.classList.add('has-img');
+      const inner = zone.querySelector('.upload-zone-inner');
+      if (inner) inner.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  fileInput.addEventListener('change', e => handleFileChange(e.target.files[0]));
+
+  // Drag-and-drop
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--accent)'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.style.borderColor = '';
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) handleFileChange(file);
+  });
+
+  // Form submit
+  document.getElementById('galleryUploadForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!selectedDataUrl) { showToast('写真を選択してください'); return; }
+    const photo = {
+      id:       Date.now().toString(),
+      dataUrl:  selectedDataUrl,
+      date:     document.getElementById('photoDate').value,
+      stadium:  document.getElementById('photoStadium').value,
+      opponent: document.getElementById('photoOpponent').value,
+      caption:  document.getElementById('photoCaption').value.trim()
+    };
+    galleryPhotos.unshift(photo);
+    try { await localforage.setItem(GALLERY_KEY, galleryPhotos); }
+    catch(e) { console.error('localForage save error', e); showToast('保存に失敗しました（ストレージ容量を確認してください）'); return; }
+    renderGallery();
+    resetUploadForm();
+    showToast('写真をギャラリーに追加しました！');
+  });
+
+  // Lightbox events
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('photoLightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('photoLightbox')) closeLightbox();
+  });
+}
+
+function resetUploadForm() {
+  document.getElementById('galleryUploadForm').reset();
+  selectedDataUrl = null;
+  const previewEl = document.getElementById('uploadPreviewImg');
+  previewEl.style.display = 'none';
+  previewEl.src = '';
+  const zone = document.getElementById('uploadZone');
+  zone.classList.remove('has-img');
+  const inner = zone.querySelector('.upload-zone-inner');
+  if (inner) inner.style.display = '';
+  document.getElementById('photoDate').value = new Date().toISOString().split('T')[0];
+}
+
+window.deletePhoto = async function(id) {
+  galleryPhotos = galleryPhotos.filter(p => p.id !== id);
+  try { await localforage.setItem(GALLERY_KEY, galleryPhotos); } catch(e) { console.error(e); }
+  renderGallery();
+  showToast('写真を削除しました');
+};
+
+function renderGallery() {
+  const photoGrid = document.getElementById('photoGrid');
+  const emptyEl   = document.getElementById('galleryEmpty');
+  photoGrid.innerHTML = '';
+
+  if (!galleryPhotos.length) { emptyEl.classList.add('visible'); return; }
+  emptyEl.classList.remove('visible');
+
+  galleryPhotos.forEach(photo => {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    const metaDate = photo.date + (photo.stadium ? ' &#128205;' + photo.stadium : '') + (photo.opponent ? ' vs ' + photo.opponent : '');
+    card.innerHTML =
+      '<img src="' + photo.dataUrl + '" alt="' + esc(photo.caption || '観戦写真') + '" loading="lazy" />' +
+      '<div class="photo-card-meta">' +
+        '<div class="photo-card-date">' + metaDate + '</div>' +
+        '<div class="photo-card-caption">' + esc(photo.caption || '') + '</div>' +
+      '</div>' +
+      '<button class="photo-del-btn" title="この写真を削除" onclick="event.stopPropagation(); deletePhoto(\'' + photo.id + '\')">&#x2715;</button>';
+    card.addEventListener('click', () => openLightbox(photo));
+    photoGrid.appendChild(card);
+  });
+}
+
+function openLightbox(photo) {
+  document.getElementById('lightboxImg').src = photo.dataUrl;
+  let info = photo.date || '';
+  if (photo.stadium)  info += ' &#128205;' + photo.stadium;
+  if (photo.opponent) info += ' vs ' + photo.opponent;
+  document.getElementById('lightboxDate').innerHTML    = info;
+  document.getElementById('lightboxCaption').textContent = photo.caption || '';
+  document.getElementById('photoLightbox').classList.add('open');
+}
+
+function closeLightbox() {
+  document.getElementById('photoLightbox').classList.remove('open');
+}
+
+// ─── BACKUP / RESTORE (JSON EXPORT / IMPORT) ──────────────────────────────────
+function initBackupSystem() {
+  const exportBtn = document.getElementById('exportDataBtn');
+  const importBtn = document.getElementById('importDataBtn');
+  const fileInput = document.getElementById('backupFileInput');
+
+  if (exportBtn) {
+    exportBtn.addEventListener('click', async () => {
+      try {
+        let galleryData = [];
+        if (window.localforage) {
+          galleryData = (await localforage.getItem(GALLERY_KEY)) || [];
+        }
+        const data = {
+          app: 'marines-cheer-hub',
+          version: '2.0',
+          exportedAt: new Date().toISOString(),
+          order: JSON.parse(localStorage.getItem('marines_order_v2') || 'null'),
+          gamelogs: JSON.parse(localStorage.getItem('marines_logs_v2') || '[]'),
+          gallery: galleryData
+        };
+
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const dateStr = new Date().toISOString().split('T')[0];
+        a.href = url;
+        a.download = `marines_cheer_hub_backup_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('バックアップJSONを出力しました');
+      } catch (err) {
+        console.error('Export error:', err);
+        showToast('エクスポート中にエラーが発生しました');
+      }
+    });
+  }
+
+  if (importBtn && fileInput) {
+    importBtn.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const imported = JSON.parse(evt.target.result);
+          if (!imported || (imported.order === undefined && !imported.gamelogs && !imported.gallery)) {
+            showToast('無効なバックアップファイルです');
+            return;
+          }
+
+          if (confirm('現在のデータをファイルの内容で上書き復元しますか？')) {
+            if (imported.order !== undefined) {
+              if (imported.order === null) localStorage.removeItem('marines_order_v2');
+              else localStorage.setItem('marines_order_v2', JSON.stringify(imported.order));
+            }
+            if (imported.gamelogs !== undefined) {
+              localStorage.setItem('marines_logs_v2', JSON.stringify(imported.gamelogs));
+            }
+            if (imported.gallery !== undefined && window.localforage) {
+              await localforage.setItem(GALLERY_KEY, imported.gallery);
+            }
+
+            showToast('データを正常に復元しました！再読み込みします...');
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          }
+        } catch (err) {
+          console.error('Import error:', err);
+          showToast('JSONファイルの読み込みに失敗しました');
+        } finally {
+          fileInput.value = '';
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+}
+
+// ─── GOOGLE IDENTITY SERVICES & GOOGLE DRIVE API SYNC ─────────────────────────
+let googleTokenClient = null;
+let googleAccessToken = null;
+let googleUser = null;
+
+const GDRIVE_FILE_NAME = 'marines_cheer_hub_data.json';
+const DEFAULT_CLIENT_ID = '735794584683-ga1e3p56fcnsej3jjaeme8ogo9vb2hc5.apps.googleusercontent.com';
+
+function getStoredClientId() {
+  return localStorage.getItem('marines_gdrive_client_id') || DEFAULT_CLIENT_ID;
+}
+
+function setStoredClientId(clientId) {
+  localStorage.setItem('marines_gdrive_client_id', clientId.trim());
+}
+
+function initGoogleDriveSync() {
+  const authBtn      = document.getElementById('googleAuthBtn');
+  const logoutBtn    = document.getElementById('googleLogoutBtn');
+  const saveBtn      = document.getElementById('gdriveSaveBtn');
+  const loadBtn      = document.getElementById('gdriveLoadBtn');
+  const configBtn    = document.getElementById('gdriveConfigBtn');
+  
+  const modalOverlay = document.getElementById('gdriveConfigModalOverlay');
+  const modalClose   = document.getElementById('gdriveConfigClose');
+  const modalCancel  = document.getElementById('gdriveConfigCancel');
+  const modalSave    = document.getElementById('gdriveConfigSave');
+  const clientIdInput= document.getElementById('gdriveClientIdInput');
+
+  function openConfigModal() {
+    if (clientIdInput) clientIdInput.value = getStoredClientId();
+    if (modalOverlay) {
+      modalOverlay.style.opacity = '1';
+      modalOverlay.style.pointerEvents = 'all';
+    }
+  }
+  function closeConfigModal() {
+    if (modalOverlay) {
+      modalOverlay.style.opacity = '0';
+      modalOverlay.style.pointerEvents = 'none';
+    }
+  }
+
+  if (configBtn) configBtn.addEventListener('click', openConfigModal);
+  if (modalClose) modalClose.addEventListener('click', closeConfigModal);
+  if (modalCancel) modalCancel.addEventListener('click', closeConfigModal);
+  
+  if (modalSave) {
+    modalSave.addEventListener('click', () => {
+      const val = clientIdInput ? clientIdInput.value.trim() : '';
+      if (!val) {
+        showToast('クライアントIDを入力してください');
+        return;
+      }
+      setStoredClientId(val);
+      closeConfigModal();
+      showToast('Client IDを保存しました！');
+      initGISClient();
+    });
+  }
+
+  function initGISClient() {
+    const clientId = getStoredClientId();
+    if (!clientId || typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+      return false;
+    }
+    try {
+      googleTokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+        callback: async (response) => {
+          if (response.error) {
+            console.error('GIS Error:', response);
+            showToast('Googleログインエラー: ' + response.error);
+            return;
+          }
+          googleAccessToken = response.access_token;
+          await fetchUserProfile();
+          updateGoogleUI(true);
+          showToast('Googleでログインしました！');
+        }
+      });
+      return true;
+    } catch (e) {
+      console.error('initGISClient Error:', e);
+      return false;
+    }
+  }
+
+  async function fetchUserProfile() {
+    if (!googleAccessToken) return;
+    try {
+      const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${googleAccessToken}` }
+      });
+      if (res.ok) {
+        googleUser = await res.json();
+      }
+    } catch (e) {
+      console.warn('User profile fetch failed:', e);
+    }
+  }
+
+  function updateGoogleUI(isLoggedIn) {
+    const unloggedEl = document.getElementById('googleAuthUnlogged');
+    const loggedEl   = document.getElementById('googleAuthLogged');
+    const avatarImg  = document.getElementById('userAvatarImg');
+    const nameText   = document.getElementById('userNameText');
+
+    if (isLoggedIn && googleUser) {
+      if (unloggedEl) unloggedEl.style.display = 'none';
+      if (loggedEl)   loggedEl.style.display   = 'flex';
+      if (avatarImg)  avatarImg.src = googleUser.picture || '';
+      if (nameText)   nameText.textContent = googleUser.name || 'ユーザー';
+    } else {
+      if (unloggedEl) unloggedEl.style.display = 'flex';
+      if (loggedEl)   loggedEl.style.display   = 'none';
+    }
+  }
+
+  if (authBtn) {
+    authBtn.addEventListener('click', () => {
+      const clientId = getStoredClientId();
+      if (!clientId) {
+        openConfigModal();
+        showToast('先にGoogle API クライアントIDを設定してください');
+        return;
+      }
+      if (!googleTokenClient) {
+        const ok = initGISClient();
+        if (!ok) {
+          showToast('Google APIライブラリの準備中です。少し待ってお試しください');
+          return;
+        }
+      }
+      googleTokenClient.requestAccessToken({ prompt: 'consent' });
+    });
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      if (googleAccessToken && typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+        google.accounts.oauth2.revoke(googleAccessToken, () => {});
+      }
+      googleAccessToken = null;
+      googleUser = null;
+      updateGoogleUI(false);
+      showToast('ログアウトしました');
+    });
+  }
+
+  if (saveBtn) {
+    saveBtn.addEventListener('click', async () => {
+      if (!googleAccessToken) {
+        showToast('Googleでログインしてください');
+        return;
+      }
+      showToast('Google Driveへ同期保存中...');
+
+      try {
+        let galleryData = [];
+        if (window.localforage) {
+          galleryData = (await localforage.getItem(GALLERY_KEY)) || [];
+        }
+        const payload = {
+          app: 'marines-cheer-hub',
+          version: '2.0',
+          updatedAt: new Date().toISOString(),
+          order: JSON.parse(localStorage.getItem('marines_order_v2') || 'null'),
+          gamelogs: JSON.parse(localStorage.getItem('marines_logs_v2') || '[]'),
+          gallery: galleryData
+        };
+
+        const jsonString = JSON.stringify(payload, null, 2);
+
+        const searchRes = await fetch(
+          `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${GDRIVE_FILE_NAME}'&fields=files(id,name)`,
+          { headers: { Authorization: `Bearer ${googleAccessToken}` } }
+        );
+        const searchData = await searchRes.json();
+        const existingFile = searchData.files && searchData.files[0];
+
+        if (existingFile) {
+          const updateRes = await fetch(
+            `https://www.googleapis.com/upload/drive/v3/files/${existingFile.id}?uploadType=media`,
+            {
+              method: 'PATCH',
+              headers: {
+                Authorization: `Bearer ${googleAccessToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: jsonString
+            }
+          );
+          if (updateRes.ok) {
+            showToast('☁️ Google Drive (appDataFolder) にデータを保存しました！');
+          } else {
+            throw new Error('Update failed');
+          }
+        } else {
+          const metadata = {
+            name: GDRIVE_FILE_NAME,
+            parents: ['appDataFolder'],
+            mimeType: 'application/json'
+          };
+          const boundary = '-------314159265358979323846';
+          const delimiter = "\r\n--" + boundary + "\r\n";
+          const close_delim = "\r\n--" + boundary + "--";
+
+          const multipartRequestBody =
+            delimiter +
+            'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+            JSON.stringify(metadata) +
+            delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            jsonString +
+            close_delim;
+
+          const createRes = await fetch(
+            'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${googleAccessToken}`,
+                'Content-Type': `multipart/related; boundary="${boundary}"`
+              },
+              body: multipartRequestBody
+            }
+          );
+          if (createRes.ok) {
+            showToast('☁️ Google Drive (appDataFolder) に新規保存しました！');
+          } else {
+            throw new Error('Create failed');
+          }
+        }
+      } catch (err) {
+        console.error('Drive save error:', err);
+        showToast('Google Driveへの保存に失敗しました');
+      }
+    });
+  }
+
+  if (loadBtn) {
+    loadBtn.addEventListener('click', async () => {
+      if (!googleAccessToken) {
+        showToast('Googleでログインしてください');
+        return;
+      }
+      showToast('Google Driveからデータ検索中...');
+
+      try {
+        const searchRes = await fetch(
+          `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${GDRIVE_FILE_NAME}'&fields=files(id,name,modifiedTime)`,
+          { headers: { Authorization: `Bearer ${googleAccessToken}` } }
+        );
+        const searchData = await searchRes.json();
+        const file = searchData.files && searchData.files[0];
+
+        if (!file) {
+          showToast('Google Drive内にバックアップデータが見つかりませんでした');
+          return;
+        }
+
+        const fileRes = await fetch(
+          `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
+          { headers: { Authorization: `Bearer ${googleAccessToken}` } }
+        );
+        const imported = await fileRes.json();
+
+        const modDate = file.modifiedTime ? new Date(file.modifiedTime).toLocaleString('ja') : '';
+        if (confirm(`Google Driveのデータ（更新日時: ${modDate}）で現在のデータを上書き復元しますか？`)) {
+          if (imported.order !== undefined) {
+            if (imported.order === null) localStorage.removeItem('marines_order_v2');
+            else localStorage.setItem('marines_order_v2', JSON.stringify(imported.order));
+          }
+          if (imported.gamelogs !== undefined) {
+            localStorage.setItem('marines_logs_v2', JSON.stringify(imported.gamelogs));
+          }
+          if (imported.gallery !== undefined && window.localforage) {
+            await localforage.setItem(GALLERY_KEY, imported.gallery);
+          }
+
+          showToast('Google Driveからデータを復元しました！再読み込みします...');
+          setTimeout(() => location.reload(), 1000);
+        }
+      } catch (err) {
+        console.error('Drive load error:', err);
+        showToast('Google Driveからの復元に失敗しました');
+      }
+    });
+  }
+
+  window.addEventListener('load', () => {
+    setTimeout(initGISClient, 500);
+  });
+}
+
+// ─── INITIALISE ALL ──────────────────────────────────────────────────────────
+renderPlayers();
+initOrderForm();
+initGameLogs();
+initGallery();
+initBackupSystem();
+initGoogleDriveSync();
+
+</script>
+</body>
+</html>
