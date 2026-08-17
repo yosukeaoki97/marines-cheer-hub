@@ -114,6 +114,43 @@
     .empty-title { font-size:17px; font-weight:700; margin-bottom:6px; }
     .empty-sub { font-size:12px; color:var(--muted); }
 
+    /* Player Card Stats Button */
+    .card-stats-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; background: rgba(0, 170, 255, 0.12); border: 1px solid rgba(0, 170, 255, 0.3); color: var(--accent); font-size: 11px; font-weight: 700; text-decoration: none; transition: all var(--t); margin-top: 6px; width: fit-content; }
+    .card-stats-btn:hover { background: rgba(0, 170, 255, 0.28); color: var(--white); transform: translateY(-1px); }
+
+    /* AI Chat Floating Widget */
+    #aiChatToggleBtn { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--marines-red), #8b0000); border: 2px solid rgba(255,255,255,0.3); color: white; font-size: 24px; cursor: pointer; box-shadow: 0 8px 25px rgba(200,16,46,0.6), var(--glow-red); display: flex; align-items: center; justify-content: center; z-index: 1200; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    #aiChatToggleBtn:hover { transform: scale(1.1); }
+    #aiChatToggleBtn .chat-badge { position: absolute; top: -2px; right: -2px; width: 14px; height: 14px; background: var(--green); border: 2px solid var(--dark); border-radius: 50%; }
+
+    #aiChatWindow { position: fixed; bottom: 90px; right: 24px; width: 340px; height: 460px; max-width: calc(100vw - 32px); max-height: calc(100vh - 120px); background: linear-gradient(160deg, #12121f 0%, #0a0a18 100%); border: 1px solid rgba(0,170,255,0.3); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.8), var(--glow); display: flex; flex-direction: column; z-index: 1200; transform: translateY(20px) scale(0.95); opacity: 0; pointer-events: none; transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); overflow: hidden; }
+    #aiChatWindow.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: all; }
+    .chat-header { background: linear-gradient(135deg, #0d0d24, #1a1a36); padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .chat-title { display: flex; align-items: center; gap: 10px; }
+    .chat-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--marines-blue), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: white; border: 1px solid var(--border-accent); }
+    .chat-name { font-size: 14px; font-weight: 700; color: var(--white); }
+    .chat-status { font-size: 10px; color: var(--green); }
+    .chat-close { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; padding: 2px 6px; }
+    .chat-close:hover { color: var(--white); }
+    .chat-body { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 13px; scrollbar-width: thin; }
+    .chat-msg { display: flex; flex-direction: column; max-width: 82%; }
+    .chat-msg.bot { align-self: flex-start; }
+    .chat-msg.user { align-self: flex-end; }
+    .msg-bubble { padding: 9px 13px; border-radius: 14px; line-height: 1.5; word-break: break-word; }
+    .chat-msg.bot .msg-bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--white); border-bottom-left-radius: 3px; }
+    .chat-msg.user .msg-bubble { background: linear-gradient(135deg, var(--marines-blue), var(--accent2)); color: var(--white); border-bottom-right-radius: 3px; }
+    .chat-footer { padding: 10px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.3); display: flex; gap: 8px; }
+    .chat-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 8px 14px; color: var(--white); font-family: 'Noto Sans JP', sans-serif; font-size: 12px; outline: none; }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-send-btn { background: var(--accent); border: none; border-radius: 50%; width: 34px; height: 34px; color: var(--dark); font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform var(--t); }
+    .chat-send-btn:hover { transform: scale(1.05); }
+
+    /* Schedule / Stats Links Card Modal */
+    .link-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: var(--white); transition: all var(--t); }
+    .link-card:hover { border-color: var(--border-accent); background: var(--card-hover); transform: translateX(3px); box-shadow: var(--glow); }
+    .link-card-title { font-size: 14px; font-weight: 700; color: var(--white); display: flex; align-items: center; gap: 8px; }
+    .link-card-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
     /* SECTION HEADER / BUTTONS */
     .section-header { margin-bottom: 24px; }
     .section-title { font-size: 22px; font-weight: 900; letter-spacing: 1px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
@@ -344,6 +381,9 @@
             🚪
           </button>
         </div>
+
+        <!-- Schedule & Stats Modal Button -->
+        <button class="header-btn" id="scheduleModalBtn" title="試合日程・成績・順位表（スポナビ）" style="border-color:var(--gold);color:var(--gold);background:rgba(245,166,35,0.1);">📊 成績・日程</button>
 
         <!-- Local JSON Backup / Restore -->
         <button class="header-btn" id="exportDataBtn" title="全データをJSONファイルで保存（スマホ・PC対応）">📥 保存</button>
@@ -758,6 +798,73 @@
   </div>
 </div>
 
+<!-- Schedule & Stats Modal -->
+<div id="scheduleModalOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:1500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.28s ease;">
+  <div style="background:linear-gradient(160deg,#12121f 0%,#0a0a18 100%);border:1px solid rgba(245,166,35,0.4);border-radius:20px;width:100%;max-width:500px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,0.8);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+      <h3 style="font-size:16px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px;">📊 試合日程・チーム成績 (スポナビ)</h3>
+      <button id="scheduleModalClose" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">&#x2715;</button>
+    </div>
+    <p style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.5;margin-bottom:16px;">
+      最新の試合速報、一球速報、チーム・個人成績、パ・リーグ順位表をスポーツナビでチェックできます。
+    </p>
+    <div>
+      <a href="https://baseball.yahoo.co.jp/npb/teams/9/schedule" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">🗓️ ロッテ1軍 試合日程・一球速報</div>
+          <div class="link-card-desc">本日の試合速報、今後の対戦カード・結果</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+      <a href="https://baseball.yahoo.co.jp/npb/teams/9/stats" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">📊 ロッテ チーム・個人成績</div>
+          <div class="link-card-desc">投手・野手陣の最新個人成績・ランキング</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+      <a href="https://baseball.yahoo.co.jp/npb/standings/" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">🏆 プロ野球 順位表</div>
+          <div class="link-card-desc">パ・リーグ最新順位＆勝敗差・勝率</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Floating AI Chat Widget -->
+<button id="aiChatToggleBtn" title="マリーンズAIチャット" aria-label="AIチャットを開く">
+  💬
+  <span class="chat-badge"></span>
+</button>
+
+<div id="aiChatWindow" aria-hidden="true">
+  <div class="chat-header">
+    <div class="chat-title">
+      <div class="chat-avatar">M</div>
+      <div>
+        <div class="chat-name">マリーンズAI</div>
+        <div class="chat-status">● オンライン (ロッテファン)</div>
+      </div>
+    </div>
+    <button class="chat-close" id="aiChatClose" aria-label="チャットを閉じる">&#x2715;</button>
+  </div>
+  <div class="chat-body" id="aiChatBody">
+    <div class="chat-msg bot">
+      <div class="msg-bubble">
+        鴎ファンの皆様こんにちは！千葉ロッテマリーンズ応援AIアシスタントです⚾<br/>
+        試合日程、スタメン、観戦スポット、応援歌など、何でも気軽に話しかけてください！勝利を掴み取ろう！🔥
+      </div>
+    </div>
+  </div>
+  <form class="chat-footer" id="aiChatForm">
+    <input type="text" id="aiChatInput" class="chat-input" placeholder="例: 日程、スタメン、荻野、応援歌..." autocomplete="off" />
+    <button type="submit" class="chat-send-btn" title="送信">&#10148;</button>
+  </form>
+</div>
+
 <div id="toast" role="status" aria-live="polite"></div>
 
 <footer>
@@ -1128,12 +1235,14 @@ function renderPlayers() {
     card.setAttribute('tabindex','0');
     card.style.animationDelay = (i * 0.025) + 's';
     const commentHtml = p.my_comment ? '<p class="card-comment-snippet">' + esc(p.my_comment) + '</p>' : '';
+    const statsBtnHtml = '<a class="card-stats-btn" href="https://baseball.yahoo.co.jp/npb/teams/9/stats" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📊 スポナビ成績</a>';
     card.innerHTML =
       '<div class="card-number" aria-hidden="true">' + esc(p.number) + '</div>' +
       '<span class="card-badge ' + posBadge(p.position) + '">' + esc(p.position) + '</span>' +
       '<p class="card-name">' + esc(p.name) + '</p>' +
       '<p class="card-kana">' + esc(p.kana) + '</p>' +
       commentHtml +
+      statsBtnHtml +
       '<div class="card-footer"><div class="card-num-label">背番号 <span>' + esc(p.number) + '</span></div><div class="card-arrow">&#8250;</div></div>';
     card.addEventListener('click', () => openPlayerModal(p));
     card.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openPlayerModal(p); } });
@@ -1177,6 +1286,8 @@ function openPlayerModal(p) {
     links += '<a class="official-link-btn" href="' + esc(p.official_url) + '" target="_blank" rel="noopener noreferrer">' +
       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>公式プロフィール</a>';
   }
+  links += '<a class="official-link-btn" href="https://baseball.yahoo.co.jp/npb/teams/9/stats" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #f5a623, #d48806);border-color:rgba(245,166,35,0.4);">' +
+    '📊 スポナビ個人成績</a>';
   links += '<a class="yt-search-link" href="https://www.youtube.com/results?search_query=' + q + '" target="_blank" rel="noopener noreferrer">' +
     '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.75 15.5V8.5L15.8 12l-6.05 3.5z"/></svg>応援歌を YouTube で探す</a>';
   document.getElementById('actionLinks').innerHTML = links;
@@ -1937,6 +2048,133 @@ function initGoogleDriveSync() {
   });
 }
 
+// ─── SCHEDULE & STATS MODAL ──────────────────────────────────────────────────
+function initScheduleModal() {
+  const btn = document.getElementById('scheduleModalBtn');
+  const overlay = document.getElementById('scheduleModalOverlay');
+  const closeBtn = document.getElementById('scheduleModalClose');
+
+  if (btn && overlay) {
+    btn.addEventListener('click', () => {
+      overlay.style.opacity = '1';
+      overlay.style.pointerEvents = 'all';
+    });
+  }
+  if (closeBtn && overlay) {
+    closeBtn.addEventListener('click', () => {
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+      }
+    });
+  }
+}
+
+// ─── MARINES AI CHAT WIDGET ──────────────────────────────────────────────────
+function initAIChat() {
+  const toggleBtn = document.getElementById('aiChatToggleBtn');
+  const windowEl  = document.getElementById('aiChatWindow');
+  const closeBtn  = document.getElementById('aiChatClose');
+  const formEl    = document.getElementById('aiChatForm');
+  const inputEl   = document.getElementById('aiChatInput');
+  const bodyEl    = document.getElementById('aiChatBody');
+
+  if (!toggleBtn || !windowEl) return;
+
+  toggleBtn.addEventListener('click', () => {
+    windowEl.classList.toggle('open');
+    if (windowEl.classList.contains('open')) {
+      inputEl.focus();
+    }
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => windowEl.classList.remove('open'));
+  }
+
+  function appendMsg(sender, text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-msg ' + sender;
+    msgDiv.innerHTML = '<div class="msg-bubble">' + text + '</div>';
+    bodyEl.appendChild(msgDiv);
+    bodyEl.scrollTop = bodyEl.scrollHeight;
+  }
+
+  function getBotResponse(q) {
+    const text = q.trim().toLowerCase();
+    
+    if (text.includes('日程') || text.includes('試合') || text.includes('スケジュール') || text.includes('速報') || text.includes('今日') || text.includes('きょう')) {
+      return '最新の試合日程や一球速報は、ヘッダーの「📊 成績・日程」ボタン、または<a href="https://baseball.yahoo.co.jp/npb/teams/9/schedule" target="_blank" style="color:var(--accent);font-weight:bold;">スポナビ日程ページ</a>で確認できますよ！今日も熱いご声援を！🔥';
+    }
+    if (text.includes('成績') || text.includes('打率') || text.includes('本塁打') || text.includes('防御率') || text.includes('順位') || text.includes('個人成績')) {
+      return 'ロッテのチーム成績・選手個人の成績データは<a href="https://baseball.yahoo.co.jp/npb/teams/9/stats" target="_blank" style="color:var(--accent);font-weight:bold;">スポナビチーム成績</a>から一目でチェックできます！選手カードの「📊 スポナビ成績」ボタンからも飛べますよ！';
+    }
+    if (text.includes('スタメン') || text.includes('オーダー') || text.includes('打順') || text.includes('メンバー')) {
+      return 'あなただけの夢の打順は「📋 ベストスタメン」タブで作成・保存できます！自慢のスタメンを組んで、Google DriveやJSONで保存しましょう！⚾';
+    }
+    if (text.includes('観戦') || text.includes('勝率') || text.includes('ログ')) {
+      return '今シーズンの現地参戦成績や勝率計算は「🎟️ 観戦記録」タブにお任せください！通算勝率をリアルタイムに自動計算しますよ！';
+    }
+    if (text.includes('写真') || text.includes('ギャラリー') || text.includes('フォト') || text.includes('画像')) {
+      return '現地で撮った最高の思い出写真は「📷 フォトギャラリー」タブに保存できます！IndexedDB＆Google Driveで大事な写真もしっかり保護されます📸';
+    }
+    if (text.includes('応援歌') || text.includes('チャント') || text.includes('歌') || text.includes('歌詞')) {
+      return '選手名鑑タブのカードをタップすると、応援歌の歌詞やYouTube検索リンク・試聴用動画がチェックできますよ！大声で歌って球場を熱く盛り上げましょう！メガホン準備OK！';
+    }
+    if (text.includes('荻野')) {
+      return '駆け抜けろ勝利へ 疾風（かぜ）のように荻野貴司！圧倒的スピードとベテランの勝負強さはチームの宝ですね！🏃‍♂️💨';
+    }
+    if (text.includes('藤原')) {
+      return '輝くその姿誇らしく かっとばせ藤原！フルスイングと華のあるプレイで幕張を沸かせる若きスピードスターです！✨';
+    }
+    if (text.includes('小島')) {
+      return 'ロッテが誇る安定感抜群のサウスポーエース！マウンドでの気迫あふれる投球は頼もしすぎますね！💪';
+    }
+    if (text.includes('種市')) {
+      return '奪三振マシーン種市篤暉！落差抜群のフォークボールでバッターをきりきり舞いにする姿は圧巻です！⚡';
+    }
+    if (text.includes('寺地')) {
+      return '寺地隆成選手は打撃センス抜群の期待の若手内野手です！広角に打ち分けるバッティングに超注目！⚾';
+    }
+    if (text.includes('ぞぞ') || text.includes('zozo') || text.includes('マリン') || text.includes('風') || text.includes('もつ煮')) {
+      return 'ZOZOマリンスタジアムといえば名物のマリンの風と美味しい名物もつ煮！熱い応援と波の音が最高ですね！海風を感じながらの観戦は格別です！海風ストロング！🌊';
+    }
+    if (text.includes('こんにちは') || text.includes('こんにちわ') || text.includes('初めまして') || text.includes('はじめまして') || text.includes('コンニチハ')) {
+      return '鴎ファンの皆様こんにちは！今日も千葉ロッテマリーンズを全力で応援しましょう！Marines Fight！🔥';
+    }
+    
+    const randomReplies = [
+      '千葉ロッテマリーンズの勝利を目指して、今日も熱い応援を送りましょう！We are Marines！🔥',
+      'マリーンズの熱いプレイに胸が高鳴りますね！みんなで歓喜の渦へ飛び込みましょう！⚾',
+      'どんな時もマリーンズと共に！応援のチカラで勝利を掴み取りましょう！チャントを響かせろ！📣',
+      'ご質問ありがとうございます！スタメン作成や観戦ログ入力など、ファンハブの機能をぜひ満喫してくださいね！👍'
+    ];
+    return randomReplies[Math.floor(Math.random() * randomReplies.length)];
+  }
+
+  if (formEl) {
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = inputEl.value.trim();
+      if (!q) return;
+
+      appendMsg('user', esc(q));
+      inputEl.value = '';
+
+      setTimeout(() => {
+        const botReply = getBotResponse(q);
+        appendMsg('bot', botReply);
+      }, 400);
+    });
+  }
+}
+
 // ─── INITIALISE ALL ──────────────────────────────────────────────────────────
 renderPlayers();
 initOrderForm();
@@ -1944,6 +2182,8 @@ initGameLogs();
 initGallery();
 initBackupSystem();
 initGoogleDriveSync();
+initScheduleModal();
+initAIChat();
 
 </script>
 </body>
