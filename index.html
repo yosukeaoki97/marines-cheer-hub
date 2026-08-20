@@ -161,41 +161,138 @@
     .btn-secondary { padding: 13px 20px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 50px; color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: all var(--t); }
     .btn-secondary:hover { background: rgba(255,255,255,0.12); color: var(--white); }
 
-    /* ─── GROUND / ORDER UI ─── */
-    .order-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+    /* ─── GROUND / ORDER UI (REALISTIC BASEBALL FIELD & GLASSMORPHISM) ─── */
+    .order-layout { display: grid; grid-template-columns: 1fr 350px; gap: 24px; align-items: start; }
 
     .ground-wrap {
-      background: linear-gradient(180deg, #0a1f10 0%, #1a5c2e 30%, #246b38 55%, #b8860b 72%, #7a5a08 86%, #4a3806 100%);
-      border-radius: 18px; padding: 18px 12px 20px; position: relative; overflow: hidden;
-      border: 2px solid rgba(34,197,94,0.25); box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+      background: radial-gradient(circle at 50% 25%, #0d4022 0%, #082915 45%, #04140b 75%, #020804 100%),
+                  repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 30px, transparent 30px, transparent 60px);
+      border-radius: 24px; padding: 24px 16px 26px; position: relative; overflow: hidden;
+      border: 1.5px solid rgba(52, 211, 153, 0.35);
+      box-shadow: 0 25px 65px rgba(0,0,0,0.9), inset 0 0 60px rgba(16, 185, 129, 0.15);
     }
-    .ground-wrap::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(34,197,94,0.06) 0%, transparent 70%); pointer-events: none; }
-    .ground-title { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: rgba(255,255,255,0.35); text-align: center; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.08); }
-    .ground-outfield { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 12px; }
-    .ground-infield { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
-    .ground-battery { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 14px; }
-    .ground-dh-area { display: flex; justify-content: center; padding-top: 12px; border-top: 2px dashed rgba(255,255,255,0.12); }
+    /* Stadium Lighting Spotlight */
+    .ground-wrap::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 170, 255, 0.22) 0%, transparent 70%),
+                  radial-gradient(ellipse 60% 40% at 50% 100%, rgba(200, 16, 46, 0.18) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
+    }
 
-    .pos-card { background: rgba(0,0,0,0.62); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 6px; text-align: center; min-width: 0; flex: 1; transition: border-color 0.2s, background 0.2s, transform 0.15s; }
-    .pos-card:hover { background: rgba(10,80,40,0.6); border-color: rgba(34,197,94,0.45); transform: scale(1.03); }
-    .ground-battery .pos-card { width: 130px; flex: none; }
-    .ground-dh-area .pos-card { width: 150px; flex: none; }
-    .pos-en { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700; color: #34d399; letter-spacing: 1px; }
-    .pos-jp { font-size: 9px; color: rgba(255,255,255,0.45); margin-bottom: 5px; }
-    .bat-circle { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: var(--marines-red); font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 700; color: #fff; margin-bottom: 3px; }
-    .pos-player-name { font-size: 12px; font-weight: 700; color: var(--white); line-height: 1.2; min-height: 14px; }
-    .pos-player-num { font-family: 'Oswald', sans-serif; font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+    /* Real Dirt Infield Diamond Overlay */
+    .infield-diamond-dirt {
+      position: absolute; top: 52%; left: 50%; width: 240px; height: 240px;
+      transform: translate(-50%, -50%) rotate(45deg);
+      background: radial-gradient(circle, rgba(160,82,45,0.48) 0%, rgba(139,69,19,0.32) 70%, transparent 100%);
+      border: 2px solid rgba(255, 255, 255, 0.45);
+      box-shadow: inset 0 0 25px rgba(139,69,19,0.5);
+      pointer-events: none; border-radius: 10px; z-index: 1;
+    }
 
-    .lineup-editor { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-    .lineup-title { font-size: 15px; font-weight: 700; color: var(--accent); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-    .pitcher-slot { background: rgba(200,16,46,0.1); border: 1px solid rgba(200,16,46,0.3); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
-    .slot-sp-label { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; color: #ff6b7a; width: 60px; flex-shrink: 0; }
-    .order-slot-list { display: flex; flex-direction: column; gap: 7px; }
-    .order-slot-item { display: flex; align-items: center; gap: 7px; background: var(--card-bg); border: 1px solid var(--border); padding: 7px 10px; border-radius: var(--radius-sm); }
-    .slot-num { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 16px; color: var(--accent); width: 20px; text-align: center; }
-    .slot-pos-select { background: var(--surface2); border: 1px solid var(--border); color: var(--white); padding: 5px 7px; border-radius: 6px; font-size: 11px; font-weight: 700; outline: none; cursor: pointer; width: 55px; }
-    .slot-player-select { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--white); padding: 5px 8px; border-radius: 6px; font-size: 12px; outline: none; cursor: pointer; }
-    .slot-player-select:focus, .slot-pos-select:focus { border-color: var(--accent); }
+    /* Pitcher Mound Overlay */
+    .pitcher-mound-bg {
+      position: absolute; top: 51.5%; left: 50%; transform: translate(-50%, -50%);
+      width: 72px; height: 72px; border-radius: 50%;
+      background: radial-gradient(circle, #a0522d 0%, #7a3a14 75%, transparent 100%);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6); pointer-events: none; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pitcher-plate-rect {
+      width: 20px; height: 5px; background: #ffffff; border-radius: 1px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    /* Baseball Bases Visual Markers */
+    .base-marker {
+      position: absolute; width: 18px; height: 18px; background: #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.7), inset 0 -2px 4px rgba(0,0,0,0.2);
+      pointer-events: none; z-index: 2; border-radius: 2px;
+    }
+    .base-marker.b-1b { top: 56.5%; right: 15%; transform: translateY(-50%) rotate(45deg); }
+    .base-marker.b-2b { top: 24.5%; left: 50%; transform: translateX(-50%) rotate(45deg); }
+    .base-marker.b-3b { top: 56.5%; left: 15%; transform: translateY(-50%) rotate(45deg); }
+    .base-marker.b-home {
+      bottom: 11%; left: 50%; transform: translateX(-50%);
+      width: 18px; height: 18px; background: #ffffff;
+      clip-path: polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+    }
+
+    .ground-title { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; color: rgba(255,255,255,0.6); text-align: center; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.15); position: relative; z-index: 3; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
+
+    /* ── Outfield: Fan/V Shape ── */
+    /* CF: 最奥・中央 */
+    .ground-cf-row { display: flex; justify-content: center; margin-bottom: 6px; position: relative; z-index: 3; }
+    .ground-cf-row .pos-card { width: 32%; }
+
+    /* LF & RF: CFより前・左右に開く */
+    .ground-lr-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; position: relative; z-index: 3; padding: 0 2%; }
+    .ground-lr-row .pos-card { flex: 1; }
+
+    /* ── 2-Tier Realistic Infield ── */
+    .ground-infield { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; position: relative; z-index: 3; }
+    .infield-row { display: flex; width: 100%; gap: 12px; }
+    .infield-back { justify-content: center; padding: 0 12%; } /* SS & 2B: 二塁寄り奥側 */
+    .infield-front { justify-content: space-between; padding: 0 0.5%; } /* 3B & 1B: 一塁・三塁寄り前目 */
+
+    /* ── Battery + DH on same row ── */
+    .ground-battery-row { display: flex; justify-content: center; align-items: stretch; gap: 8px; margin-bottom: 6px; position: relative; z-index: 3; padding: 0 6%; }
+    .ground-battery-row .pos-card { flex: 1; }
+    /* DH: slightly smaller, indicated as bench/foul zone */
+    .pos-card-dh { opacity: 0.9; border-style: dashed !important; border-color: rgba(245,166,35,0.4) !important; }
+    .pos-card-dh .pos-en { color: var(--gold) !important; text-shadow: 0 0 8px rgba(245,166,35,0.4); }
+
+    /* Glassmorphism Position Cards */
+    .pos-card {
+      background: rgba(10, 16, 28, 0.72);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 170, 255, 0.28);
+      border-radius: 14px; padding: 10px 8px; text-align: center; min-width: 0; flex: 1;
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+      position: relative; overflow: hidden; cursor: pointer; user-select: none;
+    }
+    .pos-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
+      background: linear-gradient(90deg, transparent, rgba(0,210,255,0.8), transparent);
+    }
+    .pos-card:hover {
+      background: rgba(14, 32, 52, 0.88);
+      border-color: rgba(0, 220, 255, 0.85);
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 14px 35px rgba(0,0,0,0.8), 0 0 25px rgba(0, 170, 255, 0.45);
+    }
+    .pos-card:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+    .ground-battery .pos-card { width: 148px; flex: none; }
+    .ground-dh-area .pos-card { width: 168px; flex: none; }
+    
+    .pos-en { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: #38bdf8; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(56,189,248,0.4); }
+    .pos-jp { font-size: 9px; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 500; }
+    .bat-circle { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, var(--marines-red), #900a20); border: 1.5px solid rgba(245,166,35,0.8); font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; box-shadow: 0 0 10px rgba(200,16,46,0.6); }
+    .pos-player-name { font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.25; min-height: 16px; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+    .pos-player-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: rgba(0, 170, 255, 0.85); margin-top: 2px; font-weight: 600; }
+
+    /* Lineup Editor Glassmorphism Panel */
+    .lineup-editor {
+      background: rgba(15, 17, 26, 0.78);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px; padding: 22px 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), var(--glow);
+    }
+    .lineup-title { font-size: 16px; font-weight: 900; color: var(--accent); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; letter-spacing: 0.5px; }
+    .pitcher-slot { background: linear-gradient(135deg, rgba(200,16,46,0.18), rgba(200,16,46,0.06)); border: 1px solid rgba(200,16,46,0.4); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(200,16,46,0.15); }
+    .slot-sp-label { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 700; color: #ff6b7a; width: 60px; flex-shrink: 0; letter-spacing: 1px; }
+    .order-slot-list { display: flex; flex-direction: column; gap: 8px; }
+    .order-slot-item { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 8px 12px; border-radius: var(--radius-sm); transition: border-color var(--t), background var(--t); }
+    .order-slot-item:hover { background: rgba(255,255,255,0.07); border-color: rgba(0,170,255,0.3); }
+    .slot-num { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 17px; color: var(--accent); width: 22px; text-align: center; }
+    .slot-pos-select { background: var(--surface2); border: 1px solid var(--border); color: var(--white); padding: 6px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; outline: none; cursor: pointer; width: 58px; transition: border-color var(--t); }
+    .slot-player-select { flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--white); padding: 6px 10px; border-radius: 8px; font-size: 12px; outline: none; cursor: pointer; transition: border-color var(--t); }
+    .slot-player-select:focus, .slot-pos-select:focus { border-color: var(--accent); box-shadow: var(--glow); }
 
     /* ─── GAMELOG ─── */
     .gamelog-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
@@ -439,20 +536,31 @@
     <div class="order-layout">
       <!-- Ground Field (LEFT) -->
       <div class="ground-wrap" aria-label="グラウンドスタメン表示">
+        <!-- Visual Dirt Diamond, Mound & White Bases -->
+        <div class="infield-diamond-dirt"></div>
+        <div class="pitcher-mound-bg"><div class="pitcher-plate-rect"></div></div>
+        <div class="base-marker b-1b" title="一塁 (1B)"></div>
+        <div class="base-marker b-2b" title="二塁 (2B)"></div>
+        <div class="base-marker b-3b" title="三塁 (3B)"></div>
+        <div class="base-marker b-home" title="本塁 (HOME)"></div>
+
         <div class="ground-title">CHIBA LOTTE MARINES ─ STARTING LINEUP</div>
-        <!-- Outfield -->
-        <div class="ground-outfield">
-          <div class="pos-card" id="gpos-LF">
-            <div class="pos-en">LF</div><div class="pos-jp">左翼手</div>
-            <div class="bat-circle" id="gbat-LF"></div>
-            <div class="pos-player-name" id="gname-LF">---</div>
-            <div class="pos-player-num" id="gnum-LF"></div>
-          </div>
+
+        <!-- Outfield: Fan/V shape — CF at back, LF & RF slightly forward -->
+        <div class="ground-cf-row">
           <div class="pos-card" id="gpos-CF">
             <div class="pos-en">CF</div><div class="pos-jp">中堅手</div>
             <div class="bat-circle" id="gbat-CF"></div>
             <div class="pos-player-name" id="gname-CF">---</div>
             <div class="pos-player-num" id="gnum-CF"></div>
+          </div>
+        </div>
+        <div class="ground-lr-row">
+          <div class="pos-card" id="gpos-LF">
+            <div class="pos-en">LF</div><div class="pos-jp">左翼手</div>
+            <div class="bat-circle" id="gbat-LF"></div>
+            <div class="pos-player-name" id="gname-LF">---</div>
+            <div class="pos-player-num" id="gnum-LF"></div>
           </div>
           <div class="pos-card" id="gpos-RF">
             <div class="pos-en">RF</div><div class="pos-jp">右翼手</div>
@@ -461,35 +569,41 @@
             <div class="pos-player-num" id="gnum-RF"></div>
           </div>
         </div>
-        <!-- Infield -->
+
+        <!-- Infield: Back = SS & 2B, Front = 3B & 1B -->
         <div class="ground-infield">
-          <div class="pos-card" id="gpos-3B">
-            <div class="pos-en">3B</div><div class="pos-jp">三塁手</div>
-            <div class="bat-circle" id="gbat-3B"></div>
-            <div class="pos-player-name" id="gname-3B">---</div>
-            <div class="pos-player-num" id="gnum-3B"></div>
+          <div class="infield-row infield-back">
+            <div class="pos-card" id="gpos-SS">
+              <div class="pos-en">SS</div><div class="pos-jp">遊撃手</div>
+              <div class="bat-circle" id="gbat-SS"></div>
+              <div class="pos-player-name" id="gname-SS">---</div>
+              <div class="pos-player-num" id="gnum-SS"></div>
+            </div>
+            <div class="pos-card" id="gpos-2B">
+              <div class="pos-en">2B</div><div class="pos-jp">二塁手</div>
+              <div class="bat-circle" id="gbat-2B"></div>
+              <div class="pos-player-name" id="gname-2B">---</div>
+              <div class="pos-player-num" id="gnum-2B"></div>
+            </div>
           </div>
-          <div class="pos-card" id="gpos-SS">
-            <div class="pos-en">SS</div><div class="pos-jp">遊撃手</div>
-            <div class="bat-circle" id="gbat-SS"></div>
-            <div class="pos-player-name" id="gname-SS">---</div>
-            <div class="pos-player-num" id="gnum-SS"></div>
-          </div>
-          <div class="pos-card" id="gpos-2B">
-            <div class="pos-en">2B</div><div class="pos-jp">二塁手</div>
-            <div class="bat-circle" id="gbat-2B"></div>
-            <div class="pos-player-name" id="gname-2B">---</div>
-            <div class="pos-player-num" id="gnum-2B"></div>
-          </div>
-          <div class="pos-card" id="gpos-1B">
-            <div class="pos-en">1B</div><div class="pos-jp">一塁手</div>
-            <div class="bat-circle" id="gbat-1B"></div>
-            <div class="pos-player-name" id="gname-1B">---</div>
-            <div class="pos-player-num" id="gnum-1B"></div>
+          <div class="infield-row infield-front">
+            <div class="pos-card" id="gpos-3B">
+              <div class="pos-en">3B</div><div class="pos-jp">三塁手</div>
+              <div class="bat-circle" id="gbat-3B"></div>
+              <div class="pos-player-name" id="gname-3B">---</div>
+              <div class="pos-player-num" id="gnum-3B"></div>
+            </div>
+            <div class="pos-card" id="gpos-1B">
+              <div class="pos-en">1B</div><div class="pos-jp">一塁手</div>
+              <div class="bat-circle" id="gbat-1B"></div>
+              <div class="pos-player-name" id="gname-1B">---</div>
+              <div class="pos-player-num" id="gnum-1B"></div>
+            </div>
           </div>
         </div>
-        <!-- Battery -->
-        <div class="ground-battery">
+
+        <!-- Battery & DH on same row -->
+        <div class="ground-battery-row">
           <div class="pos-card" id="gpos-P">
             <div class="pos-en">P</div><div class="pos-jp">先発投手</div>
             <div class="pos-player-name" id="gname-P">---</div>
@@ -501,10 +615,7 @@
             <div class="pos-player-name" id="gname-C">---</div>
             <div class="pos-player-num" id="gnum-C"></div>
           </div>
-        </div>
-        <!-- DH -->
-        <div class="ground-dh-area">
-          <div class="pos-card" id="gpos-DH">
+          <div class="pos-card pos-card-dh" id="gpos-DH">
             <div class="pos-en">DH</div><div class="pos-jp">指名打者</div>
             <div class="bat-circle" id="gbat-DH"></div>
             <div class="pos-player-name" id="gname-DH">---</div>
@@ -1362,20 +1473,43 @@ function initOrderForm() {
 
 function updateGroundDisplay() {
   const spPlayer = PLAYERS.find(p => p.id === orderState.sp);
+  const pCard = document.getElementById('gpos-P');
   document.getElementById('gname-P').textContent = spPlayer ? spPlayer.name : '---';
   document.getElementById('gnum-P').textContent  = spPlayer ? '#' + spPlayer.number : '';
+  
+  if (pCard) {
+    pCard.onclick = () => {
+      if (spPlayer) {
+        openPlayerModal(spPlayer);
+      } else {
+        showToast('先発投手を選択すると紹介モーダルが開きます');
+      }
+    };
+  }
 
   POS_OPTIONS.forEach(posKey => {
     const slot = orderState.lineup.find(s => s.pos === posKey);
     const player = slot ? PLAYERS.find(p => p.id === slot.playerId) : null;
-    const nameEl = document.getElementById('gname-' + posKey);
-    const numEl  = document.getElementById('gnum-'  + posKey);
-    const batEl  = document.getElementById('gbat-'  + posKey);
+    const posCard = document.getElementById('gpos-' + posKey);
+    const nameEl  = document.getElementById('gname-' + posKey);
+    const numEl   = document.getElementById('gnum-'  + posKey);
+    const batEl   = document.getElementById('gbat-'  + posKey);
+
     if (nameEl) nameEl.textContent = player ? player.name : '---';
     if (numEl)  numEl.textContent  = player ? '#' + player.number : '';
     if (batEl) {
       if (slot) { batEl.textContent = slot.batOrder; batEl.style.display = 'inline-flex'; }
       else { batEl.style.display = 'none'; }
+    }
+
+    if (posCard) {
+      posCard.onclick = () => {
+        if (player) {
+          openPlayerModal(player);
+        } else {
+          showToast('右の打順設定で選手を選択すると、紹介モーダルが開きます');
+        }
+      };
     }
   });
 }
