@@ -167,7 +167,7 @@
     .ground-wrap {
       background: radial-gradient(circle at 50% 25%, #0d4022 0%, #082915 45%, #04140b 75%, #020804 100%),
                   repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 30px, transparent 30px, transparent 60px);
-      border-radius: 24px; padding: 24px 16px 26px; position: relative; overflow: hidden;
+      border-radius: 24px; padding: 22px 16px 72px; position: relative; overflow: hidden;
       border: 1.5px solid rgba(52, 211, 153, 0.35);
       box-shadow: 0 25px 65px rgba(0,0,0,0.9), inset 0 0 60px rgba(16, 185, 129, 0.15);
     }
@@ -179,101 +179,96 @@
       pointer-events: none; z-index: 1;
     }
 
-    /* Real Dirt Infield Diamond Overlay */
-    .infield-diamond-dirt {
-      position: absolute; top: 52%; left: 50%; width: 240px; height: 240px;
-      transform: translate(-50%, -50%) rotate(45deg);
-      background: radial-gradient(circle, rgba(160,82,45,0.48) 0%, rgba(139,69,19,0.32) 70%, transparent 100%);
-      border: 2px solid rgba(255, 255, 255, 0.45);
-      box-shadow: inset 0 0 25px rgba(139,69,19,0.5);
-      pointer-events: none; border-radius: 10px; z-index: 1;
+    /* SVG Geometric Baseball Field Overlay */
+    .ground-field-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
     }
 
-    /* Pitcher Mound Overlay */
-    .pitcher-mound-bg {
-      position: absolute; top: 51.5%; left: 50%; transform: translate(-50%, -50%);
-      width: 72px; height: 72px; border-radius: 50%;
-      background: radial-gradient(circle, #a0522d 0%, #7a3a14 75%, transparent 100%);
-      border: 1.5px solid rgba(255,255,255,0.3);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6); pointer-events: none; z-index: 1;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .pitcher-plate-rect {
-      width: 20px; height: 5px; background: #ffffff; border-radius: 1px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
+    .ground-title { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; color: rgba(255,255,255,0.6); text-align: center; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.15); position: relative; z-index: 3; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
 
-    /* Baseball Bases Visual Markers */
-    .base-marker {
-      position: absolute; width: 18px; height: 18px; background: #ffffff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.7), inset 0 -2px 4px rgba(0,0,0,0.2);
-      pointer-events: none; z-index: 2; border-radius: 2px;
-    }
-    .base-marker.b-1b { top: 56.5%; right: 15%; transform: translateY(-50%) rotate(45deg); }
-    .base-marker.b-2b { top: 24.5%; left: 50%; transform: translateX(-50%) rotate(45deg); }
-    .base-marker.b-3b { top: 56.5%; left: 15%; transform: translateY(-50%) rotate(45deg); }
-    .base-marker.b-home {
-      bottom: 11%; left: 50%; transform: translateX(-50%);
-      width: 18px; height: 18px; background: #ffffff;
-      clip-path: polygon(50% 0%, 100% 35%, 100% 100%, 0% 100%, 0% 35%);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.7);
-    }
-
-    .ground-title { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; color: rgba(255,255,255,0.6); text-align: center; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.15); position: relative; z-index: 3; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
-
-    /* ── Outfield: Fan/V Shape ── */
-    /* CF: 最奥・中央 */
+    /* ── Outfield: Fan Shape (CF: 50% Center Axis / LF & RF: Symmetric) ── */
     .ground-cf-row { display: flex; justify-content: center; margin-bottom: 6px; position: relative; z-index: 3; }
-    .ground-cf-row .pos-card { width: 32%; }
+    .ground-cf-row .pos-card { width: 38%; max-width: 38%; }
+    .ground-lr-row { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 14px; position: relative; z-index: 3; padding: 0 4%; }
+    .ground-lr-row .pos-card { width: 38%; max-width: 38%; flex: none; }
 
-    /* LF & RF: CFより前・左右に開く */
-    .ground-lr-row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; position: relative; z-index: 3; padding: 0 2%; }
-    .ground-lr-row .pos-card { flex: 1; }
-
-    /* ── 2-Tier Realistic Infield ── */
+    /* ── Infield: 3-tier (Back=SS/2B, Mound=P at 50% Axis, Front=3B/1B on Foul Lines) ── */
     .ground-infield { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; position: relative; z-index: 3; }
     .infield-row { display: flex; width: 100%; gap: 12px; }
-    .infield-back { justify-content: center; padding: 0 12%; } /* SS & 2B: 二塁寄り奥側 */
-    .infield-front { justify-content: space-between; padding: 0 0.5%; } /* 3B & 1B: 一塁・三塁寄り前目 */
+    .infield-back  { justify-content: center; padding: 0 16%; }   /* SS & 2B: 2nd Base Surroundings */
+    .infield-back .pos-card { flex: 1; max-width: 44%; }
+    .infield-mound { justify-content: center; padding: 0 34%; }   /* P: Exactly on 50% Center Axis */
+    .infield-mound .pos-card { width: 100%; }
+    .infield-front { justify-content: space-between; padding: 0 6%; } /* 3B & 1B: On 3rd/1st Base Foul Lines */
+    .infield-front .pos-card { width: 38%; max-width: 38%; flex: none; }
 
-    /* ── Battery + DH on same row ── */
-    .ground-battery-row { display: flex; justify-content: center; align-items: stretch; gap: 8px; margin-bottom: 6px; position: relative; z-index: 3; padding: 0 6%; }
-    .ground-battery-row .pos-card { flex: 1; }
-    /* DH: slightly smaller, indicated as bench/foul zone */
-    .pos-card-dh { opacity: 0.9; border-style: dashed !important; border-color: rgba(245,166,35,0.4) !important; }
+    /* ── C & DH: Absolute Positioned (C on 50% Center Axis, DH on Far Right) ── */
+    .pos-card-c {
+      position: absolute; left: 50%; transform: translateX(-50%); bottom: 12px;
+      width: 36%; max-width: 140px; z-index: 4;
+    }
+    
+    /* DH: Complete CSS Reset and forced absolute placement on right foul area */
+    .pos-card-dh {
+      position: absolute !important;
+      left: auto !important;
+      right: 8% !important;
+      bottom: 12px !important;
+      top: auto !important;
+      margin: 0 !important;
+      transform: none !important;
+      width: 24% !important;
+      max-width: 95px !important;
+      z-index: 4 !important;
+      opacity: 0.92;
+      border-style: dashed !important;
+      border-color: rgba(245,166,35,0.45) !important;
+      background: rgba(20, 20, 30, 0.75) !important;
+    }
+    .pos-card-dh:hover {
+      transform: translateY(-3px) scale(1.03) !important;
+    }
     .pos-card-dh .pos-en { color: var(--gold) !important; text-shadow: 0 0 8px rgba(245,166,35,0.4); }
 
-    /* Glassmorphism Position Cards */
+    /* OLD classes kept for safety — no longer rendered, no side effects */
+    .ground-outfield { display: none; }
+    .ground-battery { display: none; }
+    .ground-dh-area { display: none; }
+    .ground-battery-row { display: none; }
+    .ground-home-row { display: none; }
+    .ground-home-area { display: none; }
+    .ground-home-container { display: none; }
+
+    /* Glassmorphism Position Cards (Compact & Elegant Pro UI) */
     .pos-card {
       background: rgba(10, 16, 28, 0.72);
       backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(0, 170, 255, 0.28);
-      border-radius: 14px; padding: 10px 8px; text-align: center; min-width: 0; flex: 1;
+      border-radius: 10px; padding: 6px 4px; text-align: center; min-width: 0; flex: 1;
       transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
       position: relative; overflow: hidden; cursor: pointer; user-select: none;
     }
     .pos-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, rgba(0,210,255,0.8), transparent);
     }
     .pos-card:hover {
       background: rgba(14, 32, 52, 0.88);
       border-color: rgba(0, 220, 255, 0.85);
-      transform: translateY(-4px) scale(1.04);
-      box-shadow: 0 14px 35px rgba(0,0,0,0.8), 0 0 25px rgba(0, 170, 255, 0.45);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8), 0 0 18px rgba(0, 170, 255, 0.45);
     }
     .pos-card:active {
       transform: translateY(-1px) scale(0.98);
     }
-    .ground-battery .pos-card { width: 148px; flex: none; }
-    .ground-dh-area .pos-card { width: 168px; flex: none; }
     
-    .pos-en { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: #38bdf8; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(56,189,248,0.4); }
-    .pos-jp { font-size: 9px; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 500; }
-    .bat-circle { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, var(--marines-red), #900a20); border: 1.5px solid rgba(245,166,35,0.8); font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; box-shadow: 0 0 10px rgba(200,16,46,0.6); }
-    .pos-player-name { font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.25; min-height: 16px; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
-    .pos-player-num { font-family: 'Oswald', sans-serif; font-size: 11px; color: rgba(0, 170, 255, 0.85); margin-top: 2px; font-weight: 600; }
+    .pos-en { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; color: #38bdf8; letter-spacing: 1px; text-shadow: 0 0 8px rgba(56,189,248,0.4); line-height: 1.1; }
+    .pos-jp { font-size: 8px; color: rgba(255,255,255,0.5); margin-bottom: 3px; font-weight: 500; line-height: 1; }
+    .bat-circle { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; background: linear-gradient(135deg, var(--marines-red), #900a20); border: 1px solid rgba(245,166,35,0.8); font-family: 'Oswald', sans-serif; font-size: 9px; font-weight: 700; color: #fff; margin-bottom: 2px; box-shadow: 0 0 8px rgba(200,16,46,0.6); }
+    .pos-player-name { font-size: 11px; font-weight: 700; color: var(--white); line-height: 1.2; min-height: 14px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pos-player-num { font-family: 'Oswald', sans-serif; font-size: 9px; color: rgba(0, 170, 255, 0.85); margin-top: 1px; font-weight: 600; line-height: 1; }
 
     /* Lineup Editor Glassmorphism Panel */
     .lineup-editor {
@@ -536,17 +531,33 @@
     <div class="order-layout">
       <!-- Ground Field (LEFT) -->
       <div class="ground-wrap" aria-label="グラウンドスタメン表示">
-        <!-- Visual Dirt Diamond, Mound & White Bases -->
-        <div class="infield-diamond-dirt"></div>
-        <div class="pitcher-mound-bg"><div class="pitcher-plate-rect"></div></div>
-        <div class="base-marker b-1b" title="一塁 (1B)"></div>
-        <div class="base-marker b-2b" title="二塁 (2B)"></div>
-        <div class="base-marker b-3b" title="三塁 (3B)"></div>
-        <div class="base-marker b-home" title="本塁 (HOME)"></div>
+        <!-- SVG Clean Infield Diamond & Bases (No extraneous lines) -->
+        <svg class="ground-field-svg" viewBox="0 0 400 480" preserveAspectRatio="none" aria-hidden="true">
+          <!-- Infield Dirt & White Diamond Border (Home: 200,395 / 1B: 330,270 / 2B: 200,145 / 3B: 70,270) -->
+          <polygon points="200,145 330,270 200,395 70,270" fill="rgba(160,82,45,0.42)" stroke="#ffffff" stroke-width="2" />
+          <!-- Pitcher Mound Circle & Rubber (200, 260) -->
+          <circle cx="200" cy="260" r="30" fill="url(#moundGrad)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" />
+          <rect x="190" y="258" width="20" height="5" fill="#ffffff" rx="1" />
+          <!-- 2nd Base (200, 145) -->
+          <rect x="193" y="138" width="14" height="14" fill="#ffffff" transform="rotate(45 200 145)" rx="1.5" />
+          <!-- 3rd Base (70, 270) -->
+          <rect x="63" y="263" width="14" height="14" fill="#ffffff" transform="rotate(45 70 270)" rx="1.5" />
+          <!-- 1st Base (330, 270) -->
+          <rect x="323" y="263" width="14" height="14" fill="#ffffff" transform="rotate(45 330 270)" rx="1.5" />
+          <!-- Home Plate (5-corner polygon fully visible at 200, 395) -->
+          <polygon points="191,387 209,387 209,395 200,403 191,395" fill="#ffffff" stroke="rgba(0,0,0,0.3)" stroke-width="0.5" />
+          <defs>
+            <radialGradient id="moundGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#a0522d" />
+              <stop offset="85%" stop-color="#7a3a14" />
+              <stop offset="100%" stop-color="rgba(122,58,20,0)" />
+            </radialGradient>
+          </defs>
+        </svg>
 
         <div class="ground-title">CHIBA LOTTE MARINES ─ STARTING LINEUP</div>
 
-        <!-- Outfield: Fan/V shape — CF at back, LF & RF slightly forward -->
+        <!-- Outfield: Fan Shape (CF: Center 50% / LF & RF: Symmetric) -->
         <div class="ground-cf-row">
           <div class="pos-card" id="gpos-CF">
             <div class="pos-en">CF</div><div class="pos-jp">中堅手</div>
@@ -570,8 +581,9 @@
           </div>
         </div>
 
-        <!-- Infield: Back = SS & 2B, Front = 3B & 1B -->
+        <!-- Infield: Back=SS/2B → Mound=P(Center 50%) → Front=3B/1B(Foul lines) -->
         <div class="ground-infield">
+          <!-- Back: SS & 2B (2nd base vicinity) -->
           <div class="infield-row infield-back">
             <div class="pos-card" id="gpos-SS">
               <div class="pos-en">SS</div><div class="pos-jp">遊撃手</div>
@@ -586,6 +598,15 @@
               <div class="pos-player-num" id="gnum-2B"></div>
             </div>
           </div>
+          <!-- Mound: P exactly at 50% Center Axis -->
+          <div class="infield-row infield-mound">
+            <div class="pos-card" id="gpos-P">
+              <div class="pos-en">P</div><div class="pos-jp">先発投手</div>
+              <div class="pos-player-name" id="gname-P">---</div>
+              <div class="pos-player-num" id="gnum-P"></div>
+            </div>
+          </div>
+          <!-- Front: 3B & 1B (On 3rd/1st Base Foul Lines) -->
           <div class="infield-row infield-front">
             <div class="pos-card" id="gpos-3B">
               <div class="pos-en">3B</div><div class="pos-jp">三塁手</div>
@@ -602,25 +623,20 @@
           </div>
         </div>
 
-        <!-- Battery & DH on same row -->
-        <div class="ground-battery-row">
-          <div class="pos-card" id="gpos-P">
-            <div class="pos-en">P</div><div class="pos-jp">先発投手</div>
-            <div class="pos-player-name" id="gname-P">---</div>
-            <div class="pos-player-num" id="gnum-P"></div>
-          </div>
-          <div class="pos-card" id="gpos-C">
-            <div class="pos-en">C</div><div class="pos-jp">捕手</div>
-            <div class="bat-circle" id="gbat-C"></div>
-            <div class="pos-player-name" id="gname-C">---</div>
-            <div class="pos-player-num" id="gnum-C"></div>
-          </div>
-          <div class="pos-card pos-card-dh" id="gpos-DH">
-            <div class="pos-en">DH</div><div class="pos-jp">指名打者</div>
-            <div class="bat-circle" id="gbat-DH"></div>
-            <div class="pos-player-name" id="gname-DH">---</div>
-            <div class="pos-player-num" id="gnum-DH"></div>
-          </div>
+        <!-- C: Absolutely Centered on 50% Axis Behind Home Plate -->
+        <div class="pos-card pos-card-c" id="gpos-C">
+          <div class="pos-en">C</div><div class="pos-jp">捕手</div>
+          <div class="bat-circle" id="gbat-C"></div>
+          <div class="pos-player-name" id="gname-C">---</div>
+          <div class="pos-player-num" id="gnum-C"></div>
+        </div>
+
+        <!-- DH: Absolutely Placed on Far Right Foul Area (Independent) -->
+        <div class="pos-card pos-card-dh" id="gpos-DH">
+          <div class="pos-en">DH</div><div class="pos-jp">指名打者</div>
+          <div class="bat-circle" id="gbat-DH"></div>
+          <div class="pos-player-name" id="gname-DH">---</div>
+          <div class="pos-player-num" id="gnum-DH"></div>
         </div>
       </div>
 
