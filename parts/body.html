@@ -1,0 +1,259 @@
+﻿<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="header-logo" aria-hidden="true">M</div>
+      <div class="header-text">
+        <h1>千葉ロッテマリーンズ</h1>
+        <p>MARINES FAN HUB &amp; DATABASE</p>
+      </div>
+    </div>
+
+    <!-- NAV TABS -->
+    <nav class="nav-tabs" role="tablist" aria-label="メインナビゲーション">
+      <button class="tab-btn active" data-tab="players" role="tab" aria-selected="true" aria-controls="tab-players">⚾ 選手名鑑</button>
+      <button class="tab-btn" data-tab="order" role="tab" aria-selected="false" aria-controls="tab-order">📋 ベストスタメン</button>
+      <button class="tab-btn" data-tab="gamelog" role="tab" aria-selected="false" aria-controls="tab-gamelog">🎟️ 観戦記録</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ─── TAB 1: 選手名鑑 ─── -->
+  <section id="tab-players" class="tab-content active" role="tabpanel">
+    <div class="search-section" aria-label="選手検索">
+      <div class="search-wrap">
+        <input type="search" id="searchInput" placeholder="選手名・ひらがな・背番号で検索..." aria-label="選手を検索" autocomplete="off" />
+        <svg class="search-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <button class="clear-btn" id="clearBtn" aria-label="検索をクリア">&#x2715;</button>
+      </div>
+      <div class="filters" role="group" aria-label="ポジションフィルター">
+        <button class="filter-btn active" data-pos="all"   id="filter-all">すべて</button>
+        <button class="filter-btn"        data-pos="投手"  id="filter-pitcher">&#9889; 投手</button>
+        <button class="filter-btn"        data-pos="捕手"  id="filter-catcher">&#128737; 捕手</button>
+        <button class="filter-btn"        data-pos="内野手" id="filter-infield">&#9918; 内野手</button>
+        <button class="filter-btn"        data-pos="外野手" id="filter-outfield">&#127754; 外野手</button>
+      </div>
+    </div>
+
+    <div class="result-meta">
+      <p class="result-count" id="resultCount"><span id="countNum">0</span> 名の選手が見つかりました</p>
+    </div>
+
+    <div id="playerGrid" role="list">
+      <div id="emptyState" role="status" aria-live="polite">
+        <div class="empty-icon">&#9918;</div>
+        <p class="empty-title">選手が見つかりません</p>
+        <p class="empty-sub">別のキーワードやポジションで検索してみてください。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TAB 2: ベストスタメン作成 ─── -->
+  <section id="tab-order" class="tab-content" role="tabpanel">
+    <div class="section-header">
+      <h2 class="section-title">📋 俺のベストスタメン作成</h2>
+      <p class="section-desc">あなただけの夢の千葉ロッテマリーンズ打順・オーダーを組んで保存できます。</p>
+    </div>
+
+    <div class="order-layout">
+      <div class="order-card-wrap">
+        <div class="order-form-title">
+          <span>スタメン設定</span>
+          <span style="font-size: 12px; color: var(--muted); font-weight: normal;">※保存ボタンで維持されます</span>
+        </div>
+
+        <div class="pitcher-slot">
+          <div class="slot-label-sp">先発投手</div>
+          <select id="sp-select" class="slot-player-select">
+            <option value="">-- 先発投手を選択 --</option>
+          </select>
+        </div>
+
+        <div class="order-slot-list" id="orderSlotList"></div>
+
+        <div class="btn-group">
+          <button class="btn-primary" id="saveOrderBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            オーダーを保存
+          </button>
+          <button class="btn-secondary" id="resetOrderBtn">リセット</button>
+        </div>
+      </div>
+
+      <div class="stamen-board">
+        <div class="board-header">
+          <h3>CHIBA LOTTE MARINES</h3>
+          <p style="font-size: 11px; color: rgba(255,255,255,0.6); letter-spacing: 1px;">STARTING LINEUP</p>
+        </div>
+
+        <div class="sp-display-card">
+          <span class="sp-tag">STARTING PITCHER</span>
+          <span class="sp-name" id="board-sp-name">未設定</span>
+        </div>
+
+        <div class="board-order-grid" id="boardOrderGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TAB 3: 観戦記録＆勝率計算 ─── -->
+  <section id="tab-gamelog" class="tab-content" role="tabpanel">
+    <div class="section-header">
+      <h2 class="section-title">🎟️ 今シーズンの現地観戦成績</h2>
+      <p class="section-desc">現地で観戦した試合の勝敗や思い出を記録して、あなたの現地勝率を自動計算します。</p>
+    </div>
+
+    <div class="stats-dashboard">
+      <div class="stat-card highlight">
+        <div class="stat-label">現地勝率</div>
+        <div class="stat-value win-rate" id="stat-win-rate">.---</div>
+        <div class="stat-sub">勝 ÷ (勝 + 敗)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">現地参戦数</div>
+        <div class="stat-value" id="stat-total">0 <span style="font-size:16px;">試合</span></div>
+        <div class="stat-sub">今シーズン</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">勝敗内訳</div>
+        <div class="stat-value" style="color: #34d399;" id="stat-w-l">0勝 0敗</div>
+        <div class="stat-sub">引き分け: <span id="stat-draw-count">0</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">最多観戦球場</div>
+        <div class="stat-value" style="font-size:22px; color:var(--accent);" id="stat-top-stadium">-</div>
+        <div class="stat-sub">メインホーム/遠征先</div>
+      </div>
+    </div>
+
+    <div class="gamelog-layout">
+      <div class="form-card">
+        <h3 style="font-size:16px; font-weight:700; color:var(--accent); margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+          新規観戦記録を入力
+        </h3>
+        <form id="gameLogForm">
+          <div class="form-group">
+            <label class="form-label" for="logDate">観戦日</label>
+            <input type="date" id="logDate" class="form-input" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="logOpponent">対戦相手</label>
+            <select id="logOpponent" class="form-select" required>
+              <option value="">-- 対戦チームを選択 --</option>
+              <optgroup label="パシフィック・リーグ">
+                <option value="福岡ソフトバンクホークス">福岡ソフトバンクホークス</option>
+                <option value="北海道日本ハムファイターズ">北海道日本ハムファイターズ</option>
+                <option value="オリックス・バファローズ">オリックス・バファローズ</option>
+                <option value="東北楽天ゴールデンイーグルス">東北楽天ゴールデンイーグルス</option>
+                <option value="埼玉西武ライオンズ">埼玉西武ライオンズ</option>
+              </optgroup>
+              <optgroup label="セントラル・リーグ">
+                <option value="読売ジャイアンツ">読売ジャイアンツ</option>
+                <option value="阪神タイガース">阪神タイガース</option>
+                <option value="横浜DeNAベイスターズ">横浜DeNAベイスターズ</option>
+                <option value="広島東洋カープ">広島東洋カープ</option>
+                <option value="東京ヤクルトスワローズ">東京ヤクルトスワローズ</option>
+                <option value="中日ドラゴンズ">中日ドラゴンズ</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="logStadium">開催球場</label>
+            <select id="logStadium" class="form-select" required>
+              <option value="ZOZOマリンスタジアム">ZOZOマリンスタジアム</option>
+              <option value="エスコンフィールドHOKKAIDO">エスコンフィールドHOKKAIDO</option>
+              <option value="みずほPayPayドーム福岡">みずほPayPayドーム福岡</option>
+              <option value="京セラドーム大阪">京セラドーム大阪</option>
+              <option value="ほっともっとフィールド神戸">ほっともっとフィールド神戸</option>
+              <option value="ベルーナドーム">ベルーナドーム</option>
+              <option value="楽天モバイルパーク宮城">楽天モバイルパーク宮城</option>
+              <option value="明治神宮野球場">明治神宮野球場</option>
+              <option value="東京ドーム">東京ドーム</option>
+              <option value="横浜スタジアム">横浜スタジアム</option>
+              <option value="バンテリンドーム ナゴヤ">バンテリンドーム ナゴヤ</option>
+              <option value="阪神甲子園球場">阪神甲子園球場</option>
+              <option value="MAZDA Zoom-Zoom スタジアム広島">MAZDA Zoom-Zoom スタジアム広島</option>
+              <option value="その他">その他球場</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">試合結果</label>
+            <div class="result-radio-group">
+              <div class="radio-option">
+                <input type="radio" id="resWin" name="logResult" value="win" checked />
+                <label for="resWin" class="radio-label win">〇 勝ち</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="resLose" name="logResult" value="lose" />
+                <label for="resLose" class="radio-label lose">● 負け</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="resDraw" name="logResult" value="draw" />
+                <label for="resDraw" class="radio-label draw">△ 引分</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="logMemo">観戦メモ・スコアなど</label>
+            <textarea id="logMemo" class="form-textarea" placeholder="例：9回裏のサヨナラ打！風速10m。小島7回無失点の好投！"></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width:100%;">
+            観戦記録を追加
+          </button>
+        </form>
+      </div>
+
+      <div class="logs-wrap">
+        <div class="logs-header">
+          <h3>観戦ログ履歴</h3>
+          <button id="clearLogsBtn" style="background:transparent; border:none; color:var(--muted); font-size:12px; cursor:pointer;">全消去</button>
+        </div>
+        <div class="log-list" id="logList"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalPlayerName">
+  <div id="modal">
+    <div class="modal-header">
+      <div class="modal-header-stripe"></div>
+      <button class="modal-close" id="modalClose" aria-label="モーダルを閉じる">&#x2715;</button>
+      <div class="modal-big-number" id="modalBigNum" aria-hidden="true"></div>
+      <div class="modal-badge" id="modalBadge"></div>
+      <h2 class="modal-name" id="modalPlayerName"></h2>
+      <p class="modal-kana" id="modalKana"></p>
+      <div class="modal-num-row">
+        <span class="modal-num-label">#</span>
+        <span class="modal-num-val" id="modalNumber"></span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-section-label">選手紹介 / コメント</p>
+      <div class="comment-box"><p class="comment-text" id="modalComment"></p></div>
+
+      <div id="chantSection">
+        <p class="modal-section-label">応援歌 / チャント</p>
+        <div class="chant-box"><p class="chant-lyrics" id="modalChant"></p></div>
+      </div>
+
+      <p class="modal-section-label">公式情報 &amp; メディア</p>
+      <div id="modalVideo"></div>
+      
+      <div class="action-links" id="actionLinks"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast">オーダーを保存しました！</div>
+
+<footer>
+  <p>&copy; 2026 千葉ロッテマリーンズ ファンハブ &nbsp;|&nbsp; Fan-made non-official application</p>
+</footer>
