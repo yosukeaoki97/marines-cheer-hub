@@ -167,7 +167,7 @@
     .ground-wrap {
       background: radial-gradient(circle at 50% 25%, #0d4022 0%, #082915 45%, #04140b 75%, #020804 100%),
                   repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 30px, transparent 30px, transparent 60px);
-      border-radius: 24px; padding: 22px 16px 72px; position: relative; overflow: hidden;
+      border-radius: 24px; padding: 22px 16px 84px; position: relative; overflow: hidden;
       border: 1.5px solid rgba(52, 211, 153, 0.35);
       box-shadow: 0 25px 65px rgba(0,0,0,0.9), inset 0 0 60px rgba(16, 185, 129, 0.15);
     }
@@ -182,7 +182,7 @@
     /* SVG Geometric Baseball Field Overlay */
     .ground-field-svg {
       position: absolute; inset: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 1;
+      pointer-events: none; z-index: 2;
     }
 
     .ground-title { font-family: 'Oswald', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 4px; color: rgba(255,255,255,0.6); text-align: center; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.15); position: relative; z-index: 3; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
@@ -205,7 +205,7 @@
 
     /* ── C & DH: Absolute Positioned (C on 50% Center Axis, DH on Far Right) ── */
     .pos-card-c {
-      position: absolute; left: 50%; transform: translateX(-50%); bottom: 12px;
+      position: absolute; left: 50%; transform: translateX(-50%); bottom: 10px;
       width: 36%; max-width: 140px; z-index: 4;
     }
     
@@ -961,7 +961,133 @@
   </div>
 </div>
 
-<!-- Floating AI Chat Widget -->
+<!-- ★ 観戦ログ編集モーダル ★ -->
+<div id="logEditModalOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:1600;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity 0.25s ease;">
+  <div style="background:linear-gradient(160deg,#12121f 0%,#0a0a18 100%);border:1px solid rgba(0,170,255,0.28);border-radius:20px;width:100%;max-width:480px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,0.8);max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+      <h3 style="font-size:15px;font-weight:700;color:var(--accent);">✏️ 観戦ログを編集</h3>
+      <button id="logEditClose" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">&#x2715;</button>
+    </div>
+    <input type="hidden" id="logEditId" />
+    <div class="form-group">
+      <label class="form-label" for="logEditDate">観戦日</label>
+      <input type="date" id="logEditDate" class="form-input" required />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="logEditOpponent">対戦相手</label>
+      <select id="logEditOpponent" class="form-select" required>
+        <optgroup label="パ・リーグ">
+          <option value="福岡ソフトバンクホークス">福岡ソフトバンクホークス</option>
+          <option value="北海道日本ハムファイターズ">北海道日本ハムファイターズ</option>
+          <option value="オリックス・バファローズ">オリックス・バファローズ</option>
+          <option value="東北楽天ゴールデンイーグルス">東北楽天ゴールデンイーグルス</option>
+          <option value="埼玉西武ライオンズ">埼玉西武ライオンズ</option>
+        </optgroup>
+        <optgroup label="セ・リーグ（交流戦）">
+          <option value="読売ジャイアンツ">読売ジャイアンツ</option>
+          <option value="阪神タイガース">阪神タイガース</option>
+          <option value="横浜DeNAベイスターズ">横浜DeNAベイスターズ</option>
+          <option value="広島東洋カープ">広島東洋カープ</option>
+          <option value="東京ヤクルトスワローズ">東京ヤクルトスワローズ</option>
+          <option value="中日ドラゴンズ">中日ドラゴンズ</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="logEditStadium">開催球場</label>
+      <select id="logEditStadium" class="form-select" required>
+        <option value="ZOZOマリンスタジアム">ZOZOマリンスタジアム</option>
+        <option value="エスコンフィールドHOKKAIDO">エスコンフィールドHOKKAIDO</option>
+        <option value="みずほPayPayドーム福岡">みずほPayPayドーム福岡</option>
+        <option value="京セラドーム大阪">京セラドーム大阪</option>
+        <option value="ほっともっとフィールド神戸">ほっともっとフィールド神戸</option>
+        <option value="ベルーナドーム">ベルーナドーム</option>
+        <option value="楽天モバイルパーク宮城">楽天モバイルパーク宮城</option>
+        <option value="明治神宮野球場">明治神宮野球場</option>
+        <option value="東京ドーム">東京ドーム</option>
+        <option value="横浜スタジアム">横浜スタジアム</option>
+        <option value="バンテリンドーム ナゴヤ">バンテリンドーム ナゴヤ</option>
+        <option value="阪神甲子園球場">阪神甲子園球場</option>
+        <option value="MAZDA Zoom-Zoom スタジアム広島">MAZDA Zoom-Zoom スタジアム広島</option>
+        <option value="その他">その他球場</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">試合結果</label>
+      <div class="result-radio-group">
+        <div class="radio-option"><input type="radio" id="logEditResWin" name="logEditResult" value="win" /><label for="logEditResWin" class="radio-label win">〇 勝ち</label></div>
+        <div class="radio-option"><input type="radio" id="logEditResLose" name="logEditResult" value="lose" /><label for="logEditResLose" class="radio-label lose">● 負け</label></div>
+        <div class="radio-option"><input type="radio" id="logEditResDraw" name="logEditResult" value="draw" /><label for="logEditResDraw" class="radio-label draw">△ 引分</label></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="logEditMemo">観戦メモ</label>
+      <textarea id="logEditMemo" class="form-textarea" placeholder="スコアや印象に残ったプレイなど..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px;">
+      <button class="btn-secondary" id="logEditCancel" style="padding:9px 16px;">キャンセル</button>
+      <button class="btn-primary" id="logEditSave" style="padding:9px 20px;">💾 更新する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ★ フォト編集モーダル ★ -->
+<div id="photoEditModalOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:1600;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity 0.25s ease;">
+  <div style="background:linear-gradient(160deg,#12121f 0%,#0a0a18 100%);border:1px solid rgba(0,170,255,0.28);border-radius:20px;width:100%;max-width:480px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,0.8);max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+      <h3 style="font-size:15px;font-weight:700;color:var(--accent);">✏️ 写真情報を編集</h3>
+      <button id="photoEditClose" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">&#x2715;</button>
+    </div>
+    <input type="hidden" id="photoEditId" />
+    <div class="form-group">
+      <label class="form-label" for="photoEditDate">観戦日</label>
+      <input type="date" id="photoEditDate" class="form-input" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="photoEditStadium">開催球場</label>
+      <select id="photoEditStadium" class="form-select">
+        <option value="">-- 球場を選択 --</option>
+        <option value="ZOZOマリンスタジアム">ZOZOマリンスタジアム</option>
+        <option value="エスコンフィールドHOKKAIDO">エスコンフィールドHOKKAIDO</option>
+        <option value="みずほPayPayドーム福岡">みずほPayPayドーム福岡</option>
+        <option value="京セラドーム大阪">京セラドーム大阪</option>
+        <option value="ほっともっとフィールド神戸">ほっともっとフィールド神戸</option>
+        <option value="ベルーナドーム">ベルーナドーム</option>
+        <option value="楽天モバイルパーク宮城">楽天モバイルパーク宮城</option>
+        <option value="東京ドーム">東京ドーム</option>
+        <option value="横浜スタジアム">横浜スタジアム</option>
+        <option value="その他">その他</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="photoEditOpponent">対戦相手</label>
+      <select id="photoEditOpponent" class="form-select">
+        <option value="">-- チームを選択 --</option>
+        <option value="ソフトバンク">福岡ソフトバンクホークス</option>
+        <option value="日本ハム">北海道日本ハムファイターズ</option>
+        <option value="オリックス">オリックス・バファローズ</option>
+        <option value="楽天">東北楽天ゴールデンイーグルス</option>
+        <option value="西武">埼玉西武ライオンズ</option>
+        <option value="巨人">読売ジャイアンツ</option>
+        <option value="阪神">阪神タイガース</option>
+        <option value="DeNA">横浜DeNAベイスターズ</option>
+        <option value="広島">広島東洋カープ</option>
+        <option value="ヤクルト">東京ヤクルトスワローズ</option>
+        <option value="中日">中日ドラゴンズ</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="photoEditCaption">キャプション・メモ</label>
+      <textarea id="photoEditCaption" class="form-textarea" placeholder="試合の感想や印象に残ったシーン..." style="min-height:60px;"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px;">
+      <button class="btn-secondary" id="photoEditCancel" style="padding:9px 16px;">キャンセル</button>
+      <button class="btn-primary" id="photoEditSave" style="padding:9px 20px;">💾 更新する</button>
+    </div>
+  </div>
+</div>
+
+
 <button id="aiChatToggleBtn" title="マリーンズAIチャット" aria-label="AIチャットを開く">
   💬
   <span class="chat-badge"></span>
@@ -1007,6 +1133,7 @@ const PLAYERS = [
     "kana": "いけだ らいと",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001250.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2103693/top",
     "my_comment": "力強いパンチ力と勝負強さが魅力の内野手!習志野高校OB。首太い。"
   },
   {
@@ -1016,6 +1143,7 @@ const PLAYERS = [
     "kana": "たかべ あきと",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001274.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1900082/top",
     "my_comment": "圧倒的な脚力と広い守備範囲を誇るリードオフマン候補。背番号０の後継者！"
   },
   {
@@ -1025,7 +1153,8 @@ const PLAYERS = [
     "kana": "ふじわら きょうた",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001251.html",
-    "my_comment": "高い身体能力とフルスイングが魅力の外野手。大舞台での勝負強さとスピード感溢れるプレイで球場を沸かせる。"
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1800050/top",
+    "my_comment": "高い身体能力とフルスイングが魅力の外野手。大舞台での勝負強さとスピード感溢れるプレーで球場を沸かせる。"
   },
   {
     "id": "2026_00001252",
@@ -1034,6 +1163,7 @@ const PLAYERS = [
     "kana": "まつかわ こう",
     "position": "捕手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001252.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2100346/top",
     "my_comment": "高卒1年目からスタメンを張った若き司令塔。堂々としたリードとパンチ力のある打撃で扇の要を担う。"
   },
   {
@@ -1043,6 +1173,7 @@ const PLAYERS = [
     "kana": "かくなか かつや",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001253.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/700087/top",
     "my_comment": "悪球打ちでも有名な天才バットコントロールの持ち主。2026年シーズンをもって引退を決意！"
   },
   {
@@ -1052,6 +1183,7 @@ const PLAYERS = [
     "kana": "ともすぎ あつき",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001257.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2106798/top",
     "my_comment": "俊足と堅実なショート守備が持ち味の内野手。内野安打をもぎ取る足とガッツ溢れるプレーが魅力。"
   },
   {
@@ -1061,6 +1193,7 @@ const PLAYERS = [
     "kana": "やすだ ひさのり",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001255.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1700092/top",
     "my_comment": "ロッテの未来を担う大砲候補。柔らかな打撃フォームから打球を遠くへ飛ばす長打力が自慢。"
   },
   {
@@ -1070,6 +1203,7 @@ const PLAYERS = [
     "kana": "にしかわ みしょう",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001182.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1950286/top",
     "my_comment": "豪快なフルスイングと圧倒的な飛距離が持ち味のスラッガー。チームの次世代を背負う2025年新人王！"
   },
   {
@@ -1079,6 +1213,7 @@ const PLAYERS = [
     "kana": "ふじおか ゆうだい",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001254.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1700093/top",
     "my_comment": "勝負所での一撃やドラマチックな打撃を見せる内野の要。2023年CSでの幕張の奇跡の立役者。"
   },
   {
@@ -1088,6 +1223,7 @@ const PLAYERS = [
     "kana": "なかむら しょうご",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001256.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1400188/top",
     "my_comment": "長年チームを牽引する大黒柱。勝負強いバッティングとチームを支える存在感が光る信頼のリーダー。"
   },
   {
@@ -1097,6 +1233,7 @@ const PLAYERS = [
     "kana": "うえだ きゅうと",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001290.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1850947/top",
     "my_comment": "広角に打ち分けるセンスと選球眼の良さが光る内野手。打線のポイントゲッターとしての成長に期待！"
   },
   {
@@ -1106,6 +1243,7 @@ const PLAYERS = [
     "kana": "もうり かいと",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001791.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2100442/top",
     "my_comment": "キレのある伸びやかな直球と変化球で打ち取るサウスポー。今後の投手陣を支える期待の若手腕。"
   },
   {
@@ -1115,6 +1253,7 @@ const PLAYERS = [
     "kana": "おじま かずや",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001258.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1800052/top",
     "my_comment": "安定感抜群の左のエース。ゲームメイク能力が高く、マウンドでの気迫のこもった投げっぷりが熱い！"
   },
   {
@@ -1124,6 +1263,7 @@ const PLAYERS = [
     "kana": "よこやま りくと",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001281.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1900083/top",
     "my_comment": "威力抜群のサイドスローから繰り出す速球が武器。9回を任されるロッテの守護神。"
   },
   {
@@ -1133,6 +1273,7 @@ const PLAYERS = [
     "kana": "たねいち あつき",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001124.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1600146/top",
     "my_comment": "圧倒的な三振奪取能力を誇る本格派右腕。鋭いフォークでバッターをきりきり舞いにする本格派エース！"
   },
   {
@@ -1142,6 +1283,7 @@ const PLAYERS = [
     "kana": "からかわ ゆうき",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001259.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/800060/top",
     "my_comment": "精密なコントロールと多彩な変化球で相手を翻弄するベテラン右腕。成田高校の王子。"
   },
   {
@@ -1151,6 +1293,7 @@ const PLAYERS = [
     "kana": "ぐれごりー・ぽらんこ",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001260.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1460080/top",
     "my_comment": "「エル・コーヒー」の応援歌が最高の強打の助っ人。スタンドへ放り込むアーチと「パワー！」パフォーマンスが最高！"
   },
   {
@@ -1160,6 +1303,7 @@ const PLAYERS = [
     "kana": "いしかわ しんご",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001261.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1100096/top",
     "my_comment": "「ダイナマイト・シンゴ」の異名を持つ屈指の左キラー。一振りに賭ける集中力と勝負強さが光る！"
   },
   {
@@ -1169,6 +1313,7 @@ const PLAYERS = [
     "kana": "おか ひろみ",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001263.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1300044/top",
     "my_comment": "劇的なサヨナラ劇を何度も巻き起こす「ヒロミナイト」の立役者。走攻守すべてで高い身体能力を発揮！"
   },
   {
@@ -1178,6 +1323,7 @@ const PLAYERS = [
     "kana": "さとう としや",
     "position": "捕手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001268.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1900081/top",
     "my_comment": "打撃センス抜群の打てる捕手。シャープなスイングと強肩でチームの勝利に貢献する頼れる扇の要。"
   },
   {
@@ -1187,6 +1333,7 @@ const PLAYERS = [
     "kana": "やぎ あきら",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001269.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1450608/top",
     "my_comment": "気迫あふれるピッチングで打者をねじ伏せるパワフルリリーバー。重い直球とフォークのコンビネーションが持ち味。"
   },
   {
@@ -1196,6 +1343,7 @@ const PLAYERS = [
     "kana": "たなか はるや",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001271.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2102758/top",
     "my_comment": "恵まれた体格から投げ込む角度のあるストレートが魅力の大器。将来の投手陣を背負うスケールの大きさが自慢。"
   },
   {
@@ -1205,6 +1353,7 @@ const PLAYERS = [
     "kana": "やまさき つよし",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001803.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1700034/top",
     "my_comment": "俊足と内外野を守れるユーティリティ性が光るバイプレイヤー。機動力を生かした積極的なプレイに注目！"
   },
   {
@@ -1214,6 +1363,7 @@ const PLAYERS = [
     "kana": "あんどれ・じゃくそん",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001804.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2103904/top",
     "my_comment": "豪速球と落差のある変化球で押しまくる頼れる助っ人右腕。マウンド上でのパッション溢れる姿も人気。"
   },
   {
@@ -1223,6 +1373,7 @@ const PLAYERS = [
     "kana": "すずき しょうた",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001276.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2000087/top",
     "my_comment": "キレ味鋭いボールで打者の胸元を突く強気なサウスポー。リリーフ陣に欠かせない頼もしいセットアッパー。"
   },
   {
@@ -1232,6 +1383,7 @@ const PLAYERS = [
     "kana": "やまぐち こうき",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001277.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1800053/top",
     "my_comment": "チームトップクラスの長打力を誇るロマン溢れる和製スラッガー。2026年、ついに覚醒！"
   },
   {
@@ -1241,6 +1393,7 @@ const PLAYERS = [
     "kana": "ますだ なおや",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001278.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1100104/top",
     "my_comment": "独特な投球フォームと魂のこもったピッチングが持ち味のベテラン投手。通算249S！"
   },
   {
@@ -1250,6 +1403,7 @@ const PLAYERS = [
     "kana": "なかもり しゅんすけ",
     "position": "投手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001279.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2000088/top",
     "my_comment": "伸びのあるストレートとマウンド度胸の良さが魅力の若手右腕。先発・救援問わずに才能を発揮！"
   },
   {
@@ -1259,6 +1413,7 @@ const PLAYERS = [
     "kana": "おがわ りゅうせい",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001280.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2000089/top",
     "my_comment": "球界屈指の粘り強さと絶品の内野守備を誇るスペシャリスト。「小川の粘り」は相手投手にとって最大の脅威！"
   },
   {
@@ -1268,6 +1423,7 @@ const PLAYERS = [
     "kana": "やまもと だいと",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001282.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2000094/top",
     "my_comment": "育成出身から這い上がってきた未完の長距離砲。規格外の飛距離を放つ将来の大砲候補！"
   },
   {
@@ -1277,6 +1433,7 @@ const PLAYERS = [
     "kana": "わだ こうしろう",
     "position": "外野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001283.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1700098/top",
     "my_comment": "球界トップクラスの足を誇るスピードスター！代走で登場した瞬間に球場の空気を一変させる韋駄天。"
   },
   {
@@ -1286,6 +1443,7 @@ const PLAYERS = [
     "kana": "てらち りゅうせい",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001294.html",
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/2102926/top",
     "my_comment": "高卒1年目から確かなミート力を見せた期待の若手捕手。広角に打ち分けるセンス抜群の打撃が自慢！"
   },
   {
@@ -1295,7 +1453,8 @@ const PLAYERS = [
     "kana": "ねふたり・そと",
     "position": "内野手",
     "official_url": "https://www.marines.co.jp/team/player/detail/2026_00001301.html",
-    "my_comment": "驚異的なパワーでアーチを量産する主砲。チャンスでの勝負強さと豪快なスイングで頼りになる助っ人！"
+    "stats_url": "https://baseball.yahoo.co.jp/npb/player/1700020/top",
+    "my_comment": "圧倒的なパワーでクリーンナップを打つ長距離砲。頼れる主砲として勝負強い打撃を見せる。"
   }
 ];
 // ─── TAB SWITCHING ───────────────────────────────────────────────────────────
@@ -1362,7 +1521,8 @@ function renderPlayers() {
     card.setAttribute('tabindex','0');
     card.style.animationDelay = (i * 0.025) + 's';
     const commentHtml = p.my_comment ? '<p class="card-comment-snippet">' + esc(p.my_comment) + '</p>' : '';
-    const statsBtnHtml = '<a class="card-stats-btn" href="https://baseball.yahoo.co.jp/npb/teams/9/stats" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📊 スポナビ成績</a>';
+    const statsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/stats';
+    const statsBtnHtml = '<a class="card-stats-btn" href="' + esc(statsHref) + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📊 スポナビ成績</a>';
     card.innerHTML =
       '<div class="card-number" aria-hidden="true">' + esc(p.number) + '</div>' +
       '<span class="card-badge ' + posBadge(p.position) + '">' + esc(p.position) + '</span>' +
@@ -1413,7 +1573,8 @@ function openPlayerModal(p) {
     links += '<a class="official-link-btn" href="' + esc(p.official_url) + '" target="_blank" rel="noopener noreferrer">' +
       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>公式プロフィール</a>';
   }
-  links += '<a class="official-link-btn" href="https://baseball.yahoo.co.jp/npb/teams/9/stats" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #f5a623, #d48806);border-color:rgba(245,166,35,0.4);">' +
+  const modalStatsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/stats';
+  links += '<a class="official-link-btn" href="' + esc(modalStatsHref) + '" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #f5a623, #d48806);border-color:rgba(245,166,35,0.4);">' +
     '📊 スポナビ個人成績</a>';
   links += '<a class="yt-search-link" href="https://www.youtube.com/results?search_query=' + q + '" target="_blank" rel="noopener noreferrer">' +
     '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.75 15.5V8.5L15.8 12l-6.05 3.5z"/></svg>応援歌を YouTube で探す</a>';
@@ -1639,7 +1800,14 @@ function renderGameLogs() {
   let wins = 0, losses = 0, draws = 0;
   const stadCount = {};
 
-  gameLogs.forEach(log => {
+  // ── 日付降順ソート（新しい日付が上）──
+  const sorted = [...gameLogs].sort((a, b) => {
+    if (a.date > b.date) return -1;
+    if (a.date < b.date) return 1;
+    return 0;
+  });
+
+  sorted.forEach(log => {
     if (log.result === 'win')       wins++;
     else if (log.result === 'lose') losses++;
     else                            draws++;
@@ -1658,7 +1826,10 @@ function renderGameLogs() {
           (log.memo ? '<div class="log-memo">' + esc(log.memo) + '</div>' : '') +
         '</div>' +
       '</div>' +
-      '<button class="log-del-btn" title="このログを削除" onclick="deleteGameLog(\'' + log.id + '\')">&#x2715;</button>';
+      '<div style="display:flex;gap:5px;align-items:center;flex-shrink:0;">' +
+        '<button class="log-del-btn" title="編集" style="color:var(--accent);font-size:13px;padding:4px 8px;" onclick="editGameLog(\'' + log.id + '\')">✏️</button>' +
+        '<button class="log-del-btn" title="このログを削除" onclick="deleteGameLog(\'' + log.id + '\')">&#x2715;</button>' +
+      '</div>';
     listEl.appendChild(item);
   });
 
@@ -1679,6 +1850,70 @@ function renderGameLogs() {
   const shortMap = { 'ZOZOマリンスタジアム':'ZOZOマリン', 'エスコンフィールドHOKKAIDO':'エスコンF', 'みずほPayPayドーム福岡':'PayPayドーム', '京セラドーム大阪':'京セラD', 'ベルーナドーム':'ベルーナD', '楽天モバイルパーク宮城':'楽天モバパ' };
   document.getElementById('stat-stadium').textContent = shortMap[topStad] || topStad;
 }
+
+// ─── ゲームログ編集 ────────────────────────────────────────────────────────────
+window.editGameLog = function(id) {
+  const log = gameLogs.find(l => l.id === id);
+  if (!log) return;
+  document.getElementById('logEditId').value      = log.id;
+  document.getElementById('logEditDate').value    = log.date;
+  document.getElementById('logEditMemo').value    = log.memo || '';
+
+  // opponent
+  const oppEl = document.getElementById('logEditOpponent');
+  for (let i = 0; i < oppEl.options.length; i++) {
+    if (oppEl.options[i].value === log.opponent) { oppEl.selectedIndex = i; break; }
+  }
+  // stadium
+  const stadEl = document.getElementById('logEditStadium');
+  for (let i = 0; i < stadEl.options.length; i++) {
+    if (stadEl.options[i].value === log.stadium) { stadEl.selectedIndex = i; break; }
+  }
+  // result
+  const radios = document.querySelectorAll('input[name="logEditResult"]');
+  radios.forEach(r => { r.checked = (r.value === log.result); });
+
+  const overlay = document.getElementById('logEditModalOverlay');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
+};
+
+function initGameLogEdit() {
+  function closeLogEditModal() {
+    const overlay = document.getElementById('logEditModalOverlay');
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+  }
+
+  document.getElementById('logEditClose').addEventListener('click', closeLogEditModal);
+  document.getElementById('logEditCancel').addEventListener('click', closeLogEditModal);
+  document.getElementById('logEditModalOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('logEditModalOverlay')) closeLogEditModal();
+  });
+
+  document.getElementById('logEditSave').addEventListener('click', () => {
+    const id       = document.getElementById('logEditId').value;
+    const date     = document.getElementById('logEditDate').value;
+    const opponent = document.getElementById('logEditOpponent').value;
+    const stadium  = document.getElementById('logEditStadium').value;
+    const result   = document.querySelector('input[name="logEditResult"]:checked');
+    const memo     = document.getElementById('logEditMemo').value.trim();
+
+    if (!date || !opponent || !stadium || !result) {
+      showToast('日付・対戦相手・球場・結果を入力してください');
+      return;
+    }
+    const idx = gameLogs.findIndex(l => l.id === id);
+    if (idx === -1) { showToast('ログが見つかりませんでした'); return; }
+
+    gameLogs[idx] = { id, date, opponent, stadium, result: result.value, memo };
+    saveGameLogs();
+    closeLogEditModal();
+    showToast('観戦ログを更新しました！');
+  });
+}
+
+
 
 // ─── GALLERY (localForage / IndexedDB) ───────────────────────────────────────
 const GALLERY_KEY = 'marines_gallery_v1';
@@ -1784,7 +2019,14 @@ function renderGallery() {
   if (!galleryPhotos.length) { emptyEl.classList.add('visible'); return; }
   emptyEl.classList.remove('visible');
 
-  galleryPhotos.forEach(photo => {
+  // ── 日付降順ソート（新しい日付が上）──
+  const sorted = [...galleryPhotos].sort((a, b) => {
+    if ((a.date || '') > (b.date || '')) return -1;
+    if ((a.date || '') < (b.date || '')) return 1;
+    return 0;
+  });
+
+  sorted.forEach(photo => {
     const card = document.createElement('div');
     card.className = 'photo-card';
     const metaDate = photo.date + (photo.stadium ? ' &#128205;' + photo.stadium : '') + (photo.opponent ? ' vs ' + photo.opponent : '');
@@ -1794,11 +2036,74 @@ function renderGallery() {
         '<div class="photo-card-date">' + metaDate + '</div>' +
         '<div class="photo-card-caption">' + esc(photo.caption || '') + '</div>' +
       '</div>' +
-      '<button class="photo-del-btn" title="この写真を削除" onclick="event.stopPropagation(); deletePhoto(\'' + photo.id + '\')">&#x2715;</button>';
+      '<div style="position:absolute;top:6px;right:6px;display:flex;gap:4px;z-index:5;">' +
+        '<button class="photo-del-btn" title="写真情報を編集" style="background:rgba(0,130,200,0.75);font-size:12px;" onclick="event.stopPropagation(); editPhoto(\'' + photo.id + '\')">✏️</button>' +
+        '<button class="photo-del-btn" title="この写真を削除" onclick="event.stopPropagation(); deletePhoto(\'' + photo.id + '\')">&#x2715;</button>' +
+      '</div>';
     card.addEventListener('click', () => openLightbox(photo));
     photoGrid.appendChild(card);
   });
 }
+
+// ─── フォト編集 ───────────────────────────────────────────────────────────────
+window.editPhoto = function(id) {
+  const photo = galleryPhotos.find(p => p.id === id);
+  if (!photo) return;
+  document.getElementById('photoEditId').value      = photo.id;
+  document.getElementById('photoEditDate').value    = photo.date || '';
+  document.getElementById('photoEditCaption').value = photo.caption || '';
+
+  const stadEl = document.getElementById('photoEditStadium');
+  for (let i = 0; i < stadEl.options.length; i++) {
+    if (stadEl.options[i].value === (photo.stadium || '')) { stadEl.selectedIndex = i; break; }
+  }
+  const oppEl = document.getElementById('photoEditOpponent');
+  for (let i = 0; i < oppEl.options.length; i++) {
+    if (oppEl.options[i].value === (photo.opponent || '')) { oppEl.selectedIndex = i; break; }
+  }
+
+  const overlay = document.getElementById('photoEditModalOverlay');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
+};
+
+function initPhotoEdit() {
+  function closePhotoEditModal() {
+    const overlay = document.getElementById('photoEditModalOverlay');
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+  }
+
+  document.getElementById('photoEditClose').addEventListener('click', closePhotoEditModal);
+  document.getElementById('photoEditCancel').addEventListener('click', closePhotoEditModal);
+  document.getElementById('photoEditModalOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('photoEditModalOverlay')) closePhotoEditModal();
+  });
+
+  document.getElementById('photoEditSave').addEventListener('click', async () => {
+    const id      = document.getElementById('photoEditId').value;
+    const date    = document.getElementById('photoEditDate').value;
+    const stadium = document.getElementById('photoEditStadium').value;
+    const opponent= document.getElementById('photoEditOpponent').value;
+    const caption = document.getElementById('photoEditCaption').value.trim();
+
+    const idx = galleryPhotos.findIndex(p => p.id === id);
+    if (idx === -1) { showToast('写真データが見つかりませんでした'); return; }
+
+    galleryPhotos[idx] = Object.assign({}, galleryPhotos[idx], { date, stadium, opponent, caption });
+    try {
+      await localforage.setItem(GALLERY_KEY, galleryPhotos);
+    } catch(e) {
+      console.error('localForage save error on edit', e);
+      showToast('保存に失敗しました');
+      return;
+    }
+    renderGallery();
+    closePhotoEditModal();
+    showToast('写真情報を更新しました！');
+  });
+}
+
 
 function openLightbox(photo) {
   document.getElementById('lightboxImg').src = photo.dataUrl;
@@ -2329,11 +2634,14 @@ function initAIChat() {
 renderPlayers();
 initOrderForm();
 initGameLogs();
+initGameLogEdit();
 initGallery();
+initPhotoEdit();
 initBackupSystem();
 initGoogleDriveSync();
 initScheduleModal();
 initAIChat();
+
 
 </script>
 </body>
