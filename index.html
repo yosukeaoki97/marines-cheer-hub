@@ -926,16 +926,21 @@
   </div>
 </div>
 
-<!-- Schedule & Stats Modal -->
+<!-- Schedule & Stats & Official Links Modal -->
 <div id="scheduleModalOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:1500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.28s ease;">
-  <div style="background:linear-gradient(160deg,#12121f 0%,#0a0a18 100%);border:1px solid rgba(245,166,35,0.4);border-radius:20px;width:100%;max-width:500px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,0.8);">
+  <div style="background:linear-gradient(160deg,#12121f 0%,#0a0a18 100%);border:1px solid rgba(245,166,35,0.4);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,0.8);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);">
-      <h3 style="font-size:16px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px;">📊 試合日程・チーム成績 (スポナビ)</h3>
+      <h3 style="font-size:16px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px;">📊 試合日程・成績・公式リンク</h3>
       <button id="scheduleModalClose" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;">&#x2715;</button>
     </div>
-    <p style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.5;margin-bottom:16px;">
-      最新の試合速報、一球速報、チーム・個人成績、パ・リーグ順位表をスポーツナビでチェックできます。
+    <p style="font-size:12px;color:rgba(255,255,255,0.8);line-height:1.5;margin-bottom:14px;">
+      最新の試合速報、個人・チーム成績、順位表、および球団公式SNS・関連リンクです。
     </p>
+
+    <!-- 1. スポナビ 成績・日程 -->
+    <div style="font-size:12px;font-weight:700;color:var(--gold);margin:12px 0 8px;display:flex;align-items:center;gap:6px;">
+      <span>⚾</span> スポナビ速報・成績・順位表
+    </div>
     <div>
       <a href="https://baseball.yahoo.co.jp/npb/teams/9/schedule" target="_blank" rel="noopener noreferrer" class="link-card">
         <div>
@@ -944,7 +949,7 @@
         </div>
         <span style="color:var(--accent);font-size:18px;">&#8250;</span>
       </a>
-      <a href="https://baseball.yahoo.co.jp/npb/teams/9/stats" target="_blank" rel="noopener noreferrer" class="link-card">
+      <a href="https://baseball.yahoo.co.jp/npb/teams/9/players" target="_blank" rel="noopener noreferrer" class="link-card">
         <div>
           <div class="link-card-title">📊 ロッテ チーム・個人成績</div>
           <div class="link-card-desc">投手・野手陣の最新個人成績・ランキング</div>
@@ -955,6 +960,69 @@
         <div>
           <div class="link-card-title">🏆 プロ野球 順位表</div>
           <div class="link-card-desc">パ・リーグ最新順位＆勝敗差・勝率</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+    </div>
+
+    <!-- 2. 公式SNSリンク -->
+    <div style="font-size:12px;font-weight:700;color:var(--accent);margin:18px 0 8px;display:flex;align-items:center;gap:6px;">
+      <span>📱</span> 千葉ロッテマリーンズ 公式SNS
+    </div>
+    <div>
+      <a href="https://x.com/chibalotte" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">𝕏 公式X (旧Twitter)</div>
+          <div class="link-card-desc">@chibalotte 最新試合情報・球団ニュース</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+      <a href="https://www.instagram.com/chibalotte/" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">📸 公式Instagram</div>
+          <div class="link-card-desc">@chibalotte 選手たちの舞台裏・グラウンド写真</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+      <a href="https://page.line.me/442dgomb?openQrModal=true" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">💬 公式LINE</div>
+          <div class="link-card-desc">最新イベント・チケット情報をお届け</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+      <a href="https://www.facebook.com/chibalotte" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">👥 公式Facebook</div>
+          <div class="link-card-desc">球団公式ニュース＆イベントハイライト</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+      <a href="https://www.youtube.com/c/chibalotte" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">🎥 公式YouTubeチャンネル</div>
+          <div class="link-card-desc">ハイライト動画、選手密着・企画コンテンツ</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+      <a href="https://www.tiktok.com/@chibalotte?source=h5_t" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">🎵 公式TikTok</div>
+          <div class="link-card-desc">@chibalotte ショート動画・トレンド企画</div>
+        </div>
+        <span style="color:var(--accent);font-size:18px;">&#8250;</span>
+      </a>
+    </div>
+
+    <!-- 3. 関連チームリンク -->
+    <div style="font-size:12px;font-weight:700;color:var(--muted);margin:18px 0 8px;display:flex;align-items:center;gap:6px;">
+      <span>🐉</span> 関連チームリンク
+    </div>
+    <div>
+      <a href="https://www.draci.cz/" target="_blank" rel="noopener noreferrer" class="link-card">
+        <div>
+          <div class="link-card-title">🇨🇿 ドラチ・ブルノ 公式サイト</div>
+          <div class="link-card-desc">Draci Brno (チェコ野球・エクストラリーガ所属)</div>
         </div>
         <span style="color:var(--accent);font-size:18px;">&#8250;</span>
       </a>
@@ -1525,7 +1593,7 @@ function renderPlayers() {
     card.setAttribute('tabindex','0');
     card.style.animationDelay = (i * 0.025) + 's';
     const commentHtml = p.my_comment ? '<p class="card-comment-snippet">' + esc(p.my_comment) + '</p>' : '';
-    const statsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/stats';
+    const statsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/players';
     const statsBtnHtml = '<a class="card-stats-btn" href="' + esc(statsHref) + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📊 スポナビ成績</a>';
     card.innerHTML =
       '<div class="card-number" aria-hidden="true">' + esc(p.number) + '</div>' +
@@ -1577,7 +1645,7 @@ function openPlayerModal(p) {
     links += '<a class="official-link-btn" href="' + esc(p.official_url) + '" target="_blank" rel="noopener noreferrer">' +
       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>公式プロフィール</a>';
   }
-  const modalStatsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/stats';
+  const modalStatsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/players';
   links += '<a class="official-link-btn" href="' + esc(modalStatsHref) + '" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #f5a623, #d48806);border-color:rgba(245,166,35,0.4);">' +
     '📊 スポナビ個人成績</a>';
   links += '<a class="yt-search-link" href="https://www.youtube.com/results?search_query=' + q + '" target="_blank" rel="noopener noreferrer">' +
@@ -2603,7 +2671,7 @@ function initAIChat() {
       return '最新の試合日程や一球速報は、ヘッダーの「📊 成績・日程」ボタン、または<a href="https://baseball.yahoo.co.jp/npb/teams/9/schedule" target="_blank" style="color:var(--accent);font-weight:bold;">スポナビ日程ページ</a>で確認できますよ！今日も熱いご声援を！🔥';
     }
     if (text.includes('成績') || text.includes('打率') || text.includes('本塁打') || text.includes('防御率') || text.includes('順位') || text.includes('個人成績')) {
-      return 'ロッテのチーム成績・選手個人の成績データは<a href="https://baseball.yahoo.co.jp/npb/teams/9/stats" target="_blank" style="color:var(--accent);font-weight:bold;">スポナビチーム成績</a>から一目でチェックできます！選手カードの「📊 スポナビ成績」ボタンからも飛べますよ！';
+      return 'ロッテのチーム成績・選手個人の成績データは<a href="https://baseball.yahoo.co.jp/npb/teams/9/players" target="_blank" style="color:var(--accent);font-weight:bold;">スポナビチーム成績</a>から一目でチェックできます！選手カードの「📊 スポナビ成績」ボタンからも飛べますよ！';
     }
     if (text.includes('スタメン') || text.includes('オーダー') || text.includes('打順') || text.includes('メンバー')) {
       return 'あなただけの夢の打順は「📋 ベストスタメン」タブで作成・保存できます！自慢のスタメンを組んで、Google DriveやJSONで保存しましょう！⚾';

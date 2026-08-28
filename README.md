@@ -48,11 +48,22 @@ DH（指名打者）の余計なCSS計算（`left` や `transform`）を完全�
 - **ガラスモーフィズムカード**: 透過ガラス質感（`backdrop-filter: blur(14px)`）＋ホバー時ネオンブルー発光
 - **オーダーロジック完全保持**: 1〜9番 + 先発投手 (SP)、Google Drive & `localStorage` 保存・復元・リセット
 
-### 📊 2. 成績・日程クイックモーダル
-- ヘッダー右側の **「📊 成績・日程」** ボタンからスポナビ主要ページへ直接移動：
-  - 🗓️ ロッテ1軍 試合日程・一球速報 (スポナビ)
-  - 📊 ロッテ チーム・個人成績 (スポナビ)
-  - 🏆 プロ野球 順位表 (スポナビ)
+### 📊 2. 試合日程・成績・公式リンク モーダル
+- ヘッダー右側の **「📊 成績・日程」** ボタンから主要ページ・公式SNS・関連リンクへ直接アクセス可能：
+  - **⚾ スポナビ速報・成績・順位表**:
+    - 🗓️ ロッテ1軍 試合日程・一球速報 (`https://baseball.yahoo.co.jp/npb/teams/9/schedule`)
+    - 📊 ロッテ チーム・個人成績 (`https://baseball.yahoo.co.jp/npb/teams/9/players`)
+    - 🏆 プロ野球 順位表 (`https://baseball.yahoo.co.jp/npb/standings/`)
+  - **📱 千葉ロッテマリーンズ 公式SNS**:
+    - 𝕏 公式X (旧Twitter) (`https://x.com/chibalotte`)
+    - 📸 公式Instagram (`https://www.instagram.com/chibalotte/`)
+    - 💬 公式LINE (`https://page.line.me/442dgomb?openQrModal=true`)
+    - 👥 公式Facebook (`https://www.facebook.com/chibalotte`)
+    - 🎥 公式YouTubeチャンネル (`https://www.youtube.com/c/chibalotte`)
+    - 🎵 公式TikTok (`https://www.tiktok.com/@chibalotte?source=h5_t`)
+  - **🐉 関連チームリンク**:
+    - 🇨🇿 ドラチ・ブルノ 公式サイト (チェコ野球・Draci Brno) (`https://www.draci.cz/`)
+
 
 ### 💬 3. マリーンズAIチャット
 - 画面右下のフローティングボタン **「💬」** でチャットウィジェットが開閉。
