@@ -67,11 +67,13 @@ DH（指名打者）の余計なCSS計算（`left` や `transform`）を完全�
 
 ### 💬 3. マリーンズAIチャット（Gemini Web Search Grounding 連携）
 - 画面右下のフローティングボタン **「💬」** でチャットウィジェットが開閉。
-- **Gemini API（`gemini-1.5-flash`）＋ Google Web Search Grounding 搭載**:
+- **Gemini API（`gemini-3.6-flash`）＋ Google Web Search Grounding 搭載**:
   - **実行時日付の自動注入**: 実行当日の日付（例: `2026年8月28日(金)`）をプロンプトへ自動注入し、最新情報を正確に理解。
   - **リアルタイムWeb検索**: `tools: [{ googleSearch: {} }]` によりGoogle検索と連動し、今日の試合速報・開始時間・対戦相手・スコア・順位をリアルタイム取得。
   - **リンクのみ回答の禁止・具体的文章回答ルール**: リンクだけを返さず、具体的な試合情報や選手データを分かりやすい文章・箇条書きで直接回答。
   - **APIキー設定機能**: チャットヘッダー右上の「⚙️」ボタンからGemini APIキーを簡単保存・変更可能（ブラウザ内保存）。
+
+
 
 
 ### 🔑 4. Google ログイン & Google Drive アプリ専用同期
