@@ -62,7 +62,7 @@ function renderPlayers() {
     card.setAttribute('tabindex','0');
     card.style.animationDelay = (i * 0.025) + 's';
     const commentHtml = p.my_comment ? '<p class="card-comment-snippet">' + esc(p.my_comment) + '</p>' : '';
-    const statsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/stats';
+    const statsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/players';
     const statsBtnHtml = '<a class="card-stats-btn" href="' + esc(statsHref) + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📊 スポナビ成績</a>';
     card.innerHTML =
       '<div class="card-number" aria-hidden="true">' + esc(p.number) + '</div>' +
@@ -114,7 +114,7 @@ function openPlayerModal(p) {
     links += '<a class="official-link-btn" href="' + esc(p.official_url) + '" target="_blank" rel="noopener noreferrer">' +
       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>公式プロフィール</a>';
   }
-  const modalStatsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/stats';
+  const modalStatsHref = (p.stats_url && p.stats_url.trim()) ? p.stats_url : 'https://baseball.yahoo.co.jp/npb/teams/9/players';
   links += '<a class="official-link-btn" href="' + esc(modalStatsHref) + '" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(135deg, #f5a623, #d48806);border-color:rgba(245,166,35,0.4);">' +
     '📊 スポナビ個人成績</a>';
   links += '<a class="yt-search-link" href="https://www.youtube.com/results?search_query=' + q + '" target="_blank" rel="noopener noreferrer">' +
